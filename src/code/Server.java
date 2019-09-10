@@ -3,7 +3,15 @@
  */
 package code;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,6 +61,32 @@ public class Server {
 		
 		print_topics(topicos);
 		
+		try {
+			ServerSocket welcomeSocket = new ServerSocket(4900);
+			
+			while (true) {
+				Socket connectionSocket = welcomeSocket.accept();
+				Topico topico;
+				
+				//Informacion entrante del cliente
+				BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+				
+				//Lineas de texto salientes para el cliente
+				DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+			
+				//Objeto saliente para el cliente (En este caso topicos)
+				ObjectOutputStream objectOutput = new ObjectOutputStream(connectionSocket.getOutputStream());
+				
+				//Objeto entrante de un cliente
+				ObjectInputStream objectInput = new ObjectInputStream(connectionSocket.getInputStream());
+				System.out.println("Nueva conexión entrante: " + InetAddress.getLocalHost().getHostAddress());
+				
+				//Escritura del objeto a enviar al cliente
+				objectOutput.writeObject(topicos);
+			} 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
