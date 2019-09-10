@@ -3,52 +3,72 @@
  */
 package data;
 
-import java.time.LocalTime;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * @author acer
- *
- */
-public class Topico {
-	private LocalTime hora_publicacion;
-	private String ubicacion;
-	private String descripcion;
-	private String tema;
-	/**
-	 * @param hora_publicacion
-	 * @param ubicacion
-	 * @param descripcion
-	 * @param tema
-	 */
-	public Topico(LocalTime hora_publicacion, String ubicacion, String descripcion, String tema) {
+public class Topico implements Serializable{
+	
+	private String nombre;
+	private List<Agricultor> agricultor = new ArrayList<Agricultor>();
+	private List<Dato> data_history = new ArrayList<Dato>();
+	
+	public Topico(String nombre) {
 		super();
-		this.hora_publicacion = hora_publicacion;
-		this.ubicacion = ubicacion;
-		this.descripcion = descripcion;
-		this.tema = tema;
+		this.nombre = nombre;
+	
 	}
-	public LocalTime getHora_publicacion() {
-		return hora_publicacion;
+
+
+	/**
+	 * @return the nombre
+	 */
+	public String getNombre() {
+		return nombre;
 	}
-	public void setHora_publicacion(LocalTime hora_publicacion) {
-		this.hora_publicacion = hora_publicacion;
+
+
+	/**
+	 * @param nombre the nombre to set
+	 */
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
 	}
-	public String getUbicacion() {
-		return ubicacion;
+
+
+	/**
+	 * @return the agricultor
+	 */
+	public List<Agricultor> getAgricultor() {
+		return agricultor;
 	}
-	public void setUbicacion(String ubicacion) {
-		this.ubicacion = ubicacion;
+
+
+	/**
+	 * @param agricultor the agricultor to set
+	 */
+	public void setAgricultor(List<Agricultor> agricultor) {
+		this.agricultor = agricultor;
 	}
-	public String getDescripcion() {
-		return descripcion;
+
+
+	/**
+	 * @return the data_history
+	 */
+	public List<Dato> getData_history() {
+		return data_history;
 	}
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
+
+
+	/**
+	 * @param data_history the data_history to set
+	 */
+	public void setData_history(List<Dato> data_history) {
+		this.data_history = data_history;
 	}
-	public String getTema() {
-		return tema;
-	}
-	public void setTema(String tema) {
-		this.tema = tema;
+	
+	public void addData(Dato d) {
+		data_history.add(d);
+
 	}
 }

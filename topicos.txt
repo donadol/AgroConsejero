@@ -1,3 +1,20 @@
-17:30:00*papa*suramerica*Las fuertes lluvias están afectando la calidad de la papa.
-17:35:00*yuca*norteamerica*Ha disminuido el consumo de yuca en la región.
-18:20:00*papaya*europa*Aumenta el consumo de papaya en la región.
+0*papa*Subio el precio de la papa sabanera en corabastos, $90.000 el bulto*
+15*yuca*Bajo el precio de la yuca llanera, $20.000 el bulto*
+10*tomate*El precio del tomate chonto se mantuvo, $25.000 la canastilla*
+8*ahuyama*El precio de la ahuyama se mantuvo, $700 el kilo*
+12*mazorca*Subio el precio de la mazorca en tunja, $50.000 el bulto*
+15*arveja*Bajo el precio de la arveja verde, $130.000 el bulto*
+2*frijol*Subio el precio del frijol verde, $150.000 el bulto*
+0*papa*Bajo el precio de la papa pastusa, $72.000 el bulto*
+4*aguacate*Subio el precio del aguacate hass, $4.500 el kilo*
+8*tomate*Bajo el percio del tomate chonto en santander, $22.000 la canastilla*
+5*mango*Se mantuvo el precio del mango, $2.000 el kilo*
+10*banano*Subio el precio del banano criollo, $40.000 la caja de madera*
+0*limon*Se mantuvo el precio del limon comun, $170.000 el bulto*
+8*cebolla*Subio el precio de la cebolla cabezona blanca, $50.000 el bulto*
+5*espinaca*Bajo el precio de la espinaca, a $15.000 se cotiza el atado*
+6*cilantro*Subio el precio del cilantro, a $20.000 se cotiza el atado*
+3*cebolla*Bajo el precio de la cebolla larga, a $50.000 se cotiza el rollo*
+6*papa*Subio el precio de la papa criolla lavada, a $85.000 se cotiza el bulto*
+5*platano*Se mantuvo el precio del platano colicero, a $1.200 se cotriza el kilo*
+4*garbanzo*Subio el precio del garbanzo, $329.000 el bulto*

@@ -3,51 +3,77 @@
  */
 package data;
 
-import java.net.InetAddress;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
-/**
- * @author acer
- *
- */
-public class Agricultor {
-	private InetAddress localIp;
-	private String ubicacion;
-	private String nombre;
-	private ArrayList<String> cultivos = new ArrayList<String>();
-	/**
-	 * @param localIp
-	 * @param ubicacion
-	 * @param nombre
-	 */
-	public Agricultor(InetAddress localIp, String ubicacion, String nombre) {
+public class Agricultor implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
+	private int id;
+	private String Ubicacion;
+	private String Producto;
+	private String tamano;
+	private List<String> topicos;
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public Agricultor(String ubicacion, String producto, String tamaño) {
 		super();
-		this.localIp = localIp;
-		this.ubicacion = ubicacion;
-		this.nombre = nombre;
+		this.id=-1;
+		Ubicacion = ubicacion;
+		Producto = producto;
+		this.tamano = tamaño;
+		topicos= new ArrayList <String>();
 	}
-	public InetAddress getLocalIp() {
-		return localIp;
+	
+	public Agricultor() {
+		// TODO Auto-generated constructor stub
+		this.id=-1;
+		topicos= new ArrayList <String>();
 	}
-	public void setLocalIp(InetAddress localIp) {
-		this.localIp = localIp;
+
+	@Override
+	public String toString() {
+		return "Agricultor [id=" + id + ", Ubicacion=" + Ubicacion + ", Producto=" + Producto + ", tamano=" + tamano
+				+ ", topicos=" + topicos + "]";
 	}
+
 	public String getUbicacion() {
-		return ubicacion;
+		return Ubicacion;
 	}
 	public void setUbicacion(String ubicacion) {
-		this.ubicacion = ubicacion;
+		Ubicacion = ubicacion;
 	}
-	public String getNombre() {
-		return nombre;
+	public String getProducto() {
+		return Producto;
 	}
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public void setProducto(String producto) {
+		Producto = producto;
 	}
-	public ArrayList<String> getCultivos() {
-		return cultivos;
+
+	public String getTamano() {
+		return tamano;
 	}
-	public void setCultivos(ArrayList<String> cultivos) {
-		this.cultivos = cultivos;
+
+	public void setTamano(String tamano) {
+		this.tamano = tamano;
+	}
+
+	public List<String> getTopicos() {
+		return topicos;
+	}
+
+	public void setTopicos(List<String> topicos) {
+		this.topicos = topicos;
+	}
+	public void addTopico(String top) {
+		this.topicos.add(top);
 	}
 }
