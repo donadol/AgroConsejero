@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import data.Topico;
+import model.Topico;
 
 /**
  * @author acer

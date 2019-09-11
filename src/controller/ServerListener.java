@@ -1,7 +1,7 @@
 /**
  * 
  */
-package code;
+package controller;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 
-import data.Topico;
+import model.Topico;
 
 /**
  * @author acer

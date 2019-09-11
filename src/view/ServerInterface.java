@@ -22,9 +22,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import data.Agricultor;
-import data.Dato;
-import data.Topico;
+import model.Agricultor;
+import model.Dato;
+import model.Topico;
 import view.ServerInterface;
 
 public class ServerInterface extends JFrame{

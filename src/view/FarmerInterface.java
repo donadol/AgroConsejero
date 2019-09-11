@@ -27,10 +27,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import data.Agricultor;
-import data.Dato;
-import data.Topico;
-import data.Zona;
+import model.Agricultor;
+import model.Dato;
+import model.Topico;
+import model.Zona;
 
 import javax.swing.JComboBox;
 
@@ -55,7 +55,7 @@ public class FarmerInterface extends JFrame{
 	
 	private static Agricultor agricultor;
 	private JLabel IDLABEL;
-	private JComboBox Ubicaciones;
+	private JComboBox<Zona> Ubicaciones;
 
 	/**
 	 * Launch the application.
