@@ -1,7 +1,7 @@
 /**
  * 
  */
-package code;
+package utils;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import data.Topico;
+import model.Topico;
 
 /**
  * @author acer
  *
  */
-public class Utils {
+public class Files {
 	public static Topico buscarPoslista(List<Topico> topicos, String topico)
 	{
 		for (Topico topico2 : topicos) {

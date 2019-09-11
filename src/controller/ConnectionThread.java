@@ -1,7 +1,7 @@
 /**
  * 
  */
-package code;
+package controller;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -12,9 +12,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import data.Agricultor;
-import data.Dato;
-import data.Topico;
+import model.Agricultor;
+import model.Dato;
+import model.Topico;
+import utils.Files;
 
 /**
  * @author acer
@@ -29,37 +30,37 @@ public class ConnectionThread extends Thread{
 	public static List<Agricultor> agrs= new ArrayList <Agricultor>();
 	public static List<Topico> tops= new ArrayList <Topico>();
 	public static int id=0;
-	
+
 	public  ConnectionThread (Socket aClientSocket) 
 	{
-	    try 
-	    {
-			  clientSocket = aClientSocket;
-			  in = new ObjectInputStream(clientSocket.getInputStream());
-			  out =new ObjectOutputStream(clientSocket.getOutputStream());
-			  outdata=new DataOutputStream(clientSocket.getOutputStream());
-			  this.start();
+		try 
+		{
+			clientSocket = aClientSocket;
+			in = new ObjectInputStream(clientSocket.getInputStream());
+			out =new ObjectOutputStream(clientSocket.getOutputStream());
+			outdata=new DataOutputStream(clientSocket.getOutputStream());
+			this.start();
 		} 
 		catch(IOException e)
-	    {
-		      //System.out.println("Connection:"+e.getMessage());
-	    }
+		{
+			//System.out.println("Connection:"+e.getMessage());
+		}
 	}
-	
-	
+
+
 	public void run() 
 	{           		  
-	    Dato Datollego;
+		Dato Datollego;
 		try 
 		{		
 			//System.out.println("1");
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			while(true)
 			{
 				Datollego = (Dato) in.readObject();
 				if (Datollego.getTipo()==1) //PUBLICADOOOOR
 				{
-					Topico topic=Utils.buscarPoslista(tops, Datollego.getTopico());			
+					Topico topic=Files.buscarPoslista(tops, Datollego.getTopico());			
 					if(topic!=null)
 					{
 						topic.getData_history().add(Datollego);
@@ -81,7 +82,7 @@ public class ConnectionThread extends Thread{
 				{
 					boolean esta=false;
 					//System.out.println("->"+Datollego.getAgricultor().toString());
-					
+
 					if(Datollego.getAgricultor().getId()==-1)
 					{	
 						Datollego.getAgricultor().setId(id);
@@ -111,37 +112,37 @@ public class ConnectionThread extends Thread{
 						}						
 					}
 					//System.out.println(tops.toString());
-					
+
 				}
 				//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 				if (Datollego.getTipo()==99)//Actualizar informacion interfasserver
 				{
-			    	//System.out.println("ENTREEEE");
+					//System.out.println("ENTREEEE");
 					Dato datooolista=new Dato();
 					datooolista.setTopicos2(tops);
 					//System.out.println("TENGO: "+datooolista.gettops().size());	
 					out.writeObject((Object)datooolista);
-					
+
 				}
 				//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				if (Datollego.getTipo()==100)//Actualizar CONSULTA interfasserver
 				{
-				//System.out.println("ENTREEEE100");
-				Dato datooolista=new Dato();
-				Topico topictemp = null;
-				for (Topico topic : tops) {
-					if(topic.getNombre().equals(Datollego.getTopico()))
-					{
-						topictemp=new Topico(topic.getNombre());
-						for (Agricultor agri : topic.getAgricultor()) {
-							topictemp.getAgricultor().add(agri);							
+					//System.out.println("ENTREEEE100");
+					Dato datooolista=new Dato();
+					Topico topictemp = null;
+					for (Topico topic : tops) {
+						if(topic.getNombre().equals(Datollego.getTopico()))
+						{
+							topictemp=new Topico(topic.getNombre());
+							for (Agricultor agri : topic.getAgricultor()) {
+								topictemp.getAgricultor().add(agri);							
+							}
 						}
 					}
-				}
-				datooolista.getTopicos2().add(topictemp);
-				//System.out.println("TENGO100: "+datooolista.gettops().size());	
-				
-				out.writeObject((Object)datooolista);
+					datooolista.getTopicos2().add(topictemp);
+					//System.out.println("TENGO100: "+datooolista.gettops().size());	
+
+					out.writeObject((Object)datooolista);
 				}
 				//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 				if (Datollego.getTipo()==98)//Actualizar informacion interfas user
@@ -166,7 +167,7 @@ public class ConnectionThread extends Thread{
 									topicotemp.addData(datooo);
 								}
 								datooolista.getTopicos2().add(topicotemp);
-									
+
 							}
 						}
 					}
@@ -180,7 +181,7 @@ public class ConnectionThread extends Thread{
 					//out.flush();
 				}
 			}
-			
+
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package gui;
+package view;
 
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -31,7 +31,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import data.Dato;
+import model.Dato;
 
 /**
  * @author acer

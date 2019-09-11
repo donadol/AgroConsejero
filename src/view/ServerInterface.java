@@ -1,4 +1,4 @@
-package gui;
+package view;
 
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -22,10 +22,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import data.Agricultor;
-import data.Dato;
-import data.Topico;
-import gui.ServerInterface;
+import model.Agricultor;
+import model.Dato;
+import model.Topico;
+import view.ServerInterface;
 
 public class ServerInterface extends JFrame{
 
