@@ -11,7 +11,7 @@ public class Agricultor implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	private int id;
-	private String Ubicacion;
+	private Zona Ubicacion;
 	private String Producto;
 	private String tamano;
 	private List<String> topicos;
@@ -24,12 +24,12 @@ public class Agricultor implements Serializable{
 		this.id = id;
 	}
 
-	public Agricultor(String ubicacion, String producto, String tamaño) {
+	public Agricultor(Zona ubicacion, String producto, String tamano) {
 		super();
 		this.id=-1;
 		Ubicacion = ubicacion;
 		Producto = producto;
-		this.tamano = tamaño;
+		this.tamano = tamano;
 		topicos= new ArrayList <String>();
 	}
 	
@@ -45,10 +45,10 @@ public class Agricultor implements Serializable{
 				+ ", topicos=" + topicos + "]";
 	}
 
-	public String getUbicacion() {
+	public Zona getUbicacion() {
 		return Ubicacion;
 	}
-	public void setUbicacion(String ubicacion) {
+	public void setUbicacion(Zona ubicacion) {
 		Ubicacion = ubicacion;
 	}
 	public String getProducto() {
