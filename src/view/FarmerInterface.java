@@ -1,7 +1,7 @@
 /**
  * 
  */
-package gui;
+package view;
 
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -30,6 +30,9 @@ import javax.swing.table.TableModel;
 import data.Agricultor;
 import data.Dato;
 import data.Topico;
+import data.Zona;
+
+import javax.swing.JComboBox;
 
 /**
  * @author acer
@@ -44,7 +47,6 @@ public class FarmerInterface extends JFrame{
 	static DataOutputStream outdata;
 
 	private JPanel contentPane;
-	private JTextField Ubicacion;
 	private JTextField Tipo;
 	private JTextField Topico;
 	private JTextField Tamano;
@@ -53,6 +55,7 @@ public class FarmerInterface extends JFrame{
 	
 	private static Agricultor agricultor;
 	private JLabel IDLABEL;
+	private JComboBox Ubicaciones;
 
 	/**
 	 * Launch the application.
@@ -111,11 +114,6 @@ public class FarmerInterface extends JFrame{
 		lblUsuario.setBounds(237, 28, 178, 34);
 		contentPane.add(lblUsuario);
 		
-		Ubicacion = new JTextField();
-		Ubicacion.setBounds(131, 118, 86, 20);
-		contentPane.add(Ubicacion);
-		Ubicacion.setColumns(10);
-		
 		Tipo = new JTextField();
 		Tipo.setBounds(10, 118, 86, 20);
 		contentPane.add(Tipo);
@@ -158,8 +156,6 @@ public class FarmerInterface extends JFrame{
 					TableModel juliantia=new DefaultTableModel( columnaip,name);
 					topicos.setModel(juliantia);			
 				}
-				
-				
 			}
 		});
 		mas.setBounds(369, 149, 89, 23);
@@ -271,8 +267,8 @@ public class FarmerInterface extends JFrame{
 				
 				agritemp.setId(agricultor.getId());
 				
-				agricultor.setUbicacion(Ubicacion.getText());
-				agritemp.setUbicacion(Ubicacion.getText());
+				agricultor.setUbicacion(Zona.valueOf(Ubicaciones.getSelectedItem().toString()));
+				agritemp.setUbicacion(Zona.valueOf(Ubicaciones.getSelectedItem().toString()));
 
 				agricultor.setTamano(Tamano.getText());
 				agritemp.setTamano(Tamano.getText());
@@ -308,7 +304,6 @@ public class FarmerInterface extends JFrame{
 				}
 				Tipo.setEnabled(false);
 				Tamano.setEnabled(false);
-				Ubicacion.setEnabled(false);
 			}
 			
 		});
@@ -320,11 +315,11 @@ public class FarmerInterface extends JFrame{
 		contentPane.add(lblTipo);
 		
 		JLabel lblUbicacion = new JLabel("Ubicacion");
-		lblUbicacion.setBounds(131, 93, 70, 14);
+		lblUbicacion.setBounds(119, 93, 70, 14);
 		contentPane.add(lblUbicacion);
 		
 		JLabel lblTamao = new JLabel("Tama\u00F1o");
-		lblTamao.setBounds(244, 93, 46, 14);
+		lblTamao.setBounds(244, 93, 64, 14);
 		contentPane.add(lblTamao);
 		
 		JLabel lblTopico = new JLabel("Topico");
@@ -335,5 +330,9 @@ public class FarmerInterface extends JFrame{
 		IDLABEL.setFont(new Font("Tahoma", Font.PLAIN, 57));
 		IDLABEL.setBounds(10, 24, 167, 58);
 		contentPane.add(IDLABEL);
+		
+		Ubicaciones = new JComboBox(Zona.values());
+		Ubicaciones.setBounds(117, 116, 101, 27);
+		contentPane.add(Ubicaciones);
 	}
 }
