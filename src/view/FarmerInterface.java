@@ -153,8 +153,10 @@ public class FarmerInterface extends JFrame{
 					}
 					Vector<String> name = new Vector<String>();
 					name.add("Topico");
-					TableModel juliantia=new DefaultTableModel( columnaip,name);
-					topicos.setModel(juliantia);			
+					//TableModel juliantia=new DefaultTableModel( columnaip,name);
+					//topicos.setModel(juliantia);			
+					//TableModel juliantia=new DefaultTableModel( columnaip,name);
+					//topicos.setModel(juliantia);			
 				}
 			}
 		});
@@ -233,6 +235,10 @@ public class FarmerInterface extends JFrame{
 					////System.out.println("Columna+"+columnaip);
 
 				}
+
+				//TableModel juliantia=new DefaultTableModel( columnaip,name);
+
+				//tablemsj.setModel(juliantia);
 				TableModel juliantia=new DefaultTableModel( columnaip,name);
 
 				tablemsj.setModel(juliantia);
