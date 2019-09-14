@@ -56,4 +56,11 @@ public class Informacion implements Serializable{
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
+
+	@Override
+	public String toString() {
+		return "Informacion [tipo=" + tipo + ", titulo=" + titulo + ", descripcion=" + descripcion + ", tiempo="
+				+ tiempo + "]";
+	}
+	
 }
