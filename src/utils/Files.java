@@ -4,14 +4,9 @@
 package utils;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import model.Topico;
@@ -29,5 +24,41 @@ public class Files {
 			}
 		}		
 		return null;
+	}
+	public static void leerInformacion(){
+		BufferedReader br = null;
+		FileReader fr = null;
+
+		try {
+			fr = new FileReader("topicos.txt");
+			br = new BufferedReader(fr);
+			
+
+			String linea;
+			while((linea=br.readLine())!=null) {
+				 StringTokenizer token = new StringTokenizer(linea, "*");
+				 while(token.hasMoreTokens()) {
+					 System.out.println(token.nextToken());
+				 }
+			}
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (br != null) {
+					br.close();
+				}
+				if (fr != null) {
+					fr.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	public static void main(String[] args) {
+		leerInformacion();
 	}
 }
