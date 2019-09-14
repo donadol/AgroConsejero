@@ -1,0 +1,20 @@
+0*5*papa*Subio el precio de la papa sabanera en corabastos, $90.000 el bulto*
+15*5*yuca*Bajo el precio de la yuca llanera, $20.000 el bulto*
+10*45*tomate*El precio del tomate chonto se mantuvo, $25.000 la canastilla*
+8*10*ahuyama*El precio de la ahuyama se mantuvo, $700 el kilo*
+12*10*mazorca*Subio el precio de la mazorca en tunja, $50.000 el bulto*
+15*15*arveja*Bajo el precio de la arveja verde, $130.000 el bulto*
+2*5*frijol*Subio el precio del frijol verde, $150.000 el bulto*
+0*20*papa*Bajo el precio de la papa pastusa, $72.000 el bulto*
+4*30*aguacate*Subio el precio del aguacate hass, $4.500 el kilo*
+8*25*tomate*Bajo el percio del tomate chonto en santander, $22.000 la canastilla*
+5*25*mango*Se mantuvo el precio del mango, $2.000 el kilo*
+10*20*banano*Subio el precio del banano criollo, $40.000 la caja de madera*
+0*30*limon*Se mantuvo el precio del limon comun, $170.000 el bulto*
+8*35*cebolla*Subio el precio de la cebolla cabezona blanca, $50.000 el bulto*
+5*40*espinaca*Bajo el precio de la espinaca, a $15.000 se cotiza el atado*
+6*35*cilantro*Subio el precio del cilantro, a $20.000 se cotiza el atado*
+3*40*cebolla*Bajo el precio de la cebolla larga, a $50.000 se cotiza el rollo*
+6*45*papa*Subio el precio de la papa criolla lavada, a $85.000 se cotiza el bulto*
+5*50*platano*Se mantuvo el precio del platano colicero, a $1.200 se cotriza el kilo*
+4*15*garbanzo*Subio el precio del garbanzo, $329.000 el bulto*

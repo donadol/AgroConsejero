@@ -1,0 +1,31 @@
+{
+    "informacion:"[
+        {
+            "titulo": "Precio papa",
+            "descripcion": "Subio el precio de la papa sabanera en corabastos, $90.000 el bulto",
+            "tipo": "0",
+            "tags": [
+                "papa"
+            ],
+            "tiempo": "0"
+        },
+        {
+            "titulo": "Precio yuca",
+            "descripcion": "Bajo el precio de la yuca llanera, $20.000 el bulto",
+            "tipo": "0",
+            "tags": [
+                "yuca"
+            ],
+            "tiempo": "10"
+        },
+        {
+            "titulo": "Precio manzana",
+            "descripcion": "El precio de la manzana se mantuvo, $25.000 la canastilla",
+            "tipo": "0",
+            "tags": [
+                "manzana"
+            ],
+            "tiempo": "5"
+        }
+    ]
+}
