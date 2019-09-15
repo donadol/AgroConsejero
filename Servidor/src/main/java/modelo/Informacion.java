@@ -59,8 +59,12 @@ public class Informacion implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Informacion [tipo=" + tipo + ", titulo=" + titulo + ", descripcion=" + descripcion + ", tiempo="
+		String data= "Informacion [tipo=" + tipo + ", titulo=" + titulo + ", descripcion=" + descripcion + ", tiempo="
 				+ tiempo + "]";
+		for(int i =0; i<this.topicos.size(); ++i) {
+			data.concat(this.topicos.get(i).toString()+" ");
+		}
+		return data;
 	}
 	
 }
