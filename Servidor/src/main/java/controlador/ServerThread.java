@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -28,17 +29,20 @@ import modelo.Servidor;
 public class ServerThread extends Thread{
 	
 	private int puerto = 4200;
-	private Coordinador coordinador;
-	private Servidor servidor;
+	private static String estado;
+	private static Servidor servidor;
 	private String operacion;
+	private boolean esCentral;
+	private Entry< String, Integer > duplicado;
 	
 	private static ServerInterface gui;
 	private static ArrayList< Zona > zonas;
-	private HashMap< String, Integer >servidores;
 	
 	public static int id=0;
 
-	public  ServerThread ( String operacion ) {
+	public  ServerThread ( String operacion ) 
+	{
+		
 		this.operacion = operacion;
 		this.start();
 	}
@@ -90,13 +94,14 @@ public class ServerThread extends Thread{
 		}
 	}
 	
-	public void run() {           		  
+	public void run() 
+	{           		  
 		if( operacion.equals("atender"))
 			atender();
-		else if (operacion.equals("escuchar")) {
-			coordinador = new Coordinador("elegir", servidores);
+		else if (operacion.equals("escuchar")) 
 			escuchar();
-		}
+		else if (operacion.equals("ping"))
+			ping();
 			
 	} // end run
 	
@@ -132,15 +137,20 @@ public class ServerThread extends Thread{
 	}
 	
 	
-	public void escuchar() {
+public void escuchar() {
 		try 
 		{	
 			Object dato;
 			ServerSocket ss = new ServerSocket ( puerto );
 			Set< Entry < String, Integer> > datosServidores;
 			
+			if( !esCentral ) {
+				SendTCPMessage( duplicado.getKey(), duplicado.getValue(), "solicitud");
+				ServerThread s_ping = new ServerThread("ping");
+			}
+			
 			while(true)
-			{
+			{		
 				Socket s;
 				s = ss.accept();
 				ObjectInputStream in = new ObjectInputStream( s.getInputStream() );
@@ -157,54 +167,66 @@ public class ServerThread extends Thread{
 						case INICIAR_SESION:
 							synchronized ( this ) {
 								servidor.setPuerto( agricultor, s );
-								datosServidores = servidores.entrySet();
 							}
-							if( Coordinador.getIp().equals("localhost") ) {
-								agricultor.setHost( s.getInetAddress().getHostAddress() );
-								agricultor.setPuerto( s.getPort() );
-								
-								for( Entry<String, Integer> server : datosServidores )
-								{	
-									SendTCPMessage( server.getKey(), server.getValue().intValue() ,(Object ) agricultor );
+							synchronized ( estado ) {								
+								if( esCentral ) {
+									agricultor.setHost( s.getInetAddress().getHostAddress() );
+									agricultor.setPuerto( s.getPort() );
+									
+									SendTCPMessage( duplicado.getKey(), duplicado.getValue().intValue() ,(Object ) agricultor );
+									gui.EnviarMensajeExito();
 								}
-								gui.EnviarMensajeExito();
 							}
 							break;
+							
 						case SUSCRIBIR: //Suscribir un usuario a todos los servidores activos
-							synchronized( this ) {
-								servidor.RegistrarUsuario(agricultor);
-								datosServidores = servidores.entrySet();
-							}
-							if( Coordinador.getIp().equals("localhost") ) {								
-								for( Entry<String, Integer> server : datosServidores )
-								{	
-									SendTCPMessage( server.getKey(), server.getValue().intValue() ,(Object ) agricultor );
+								synchronized( this ) {
+									servidor.RegistrarUsuario(agricultor);
 								}
-							}
-							s.close();	
+								synchronized (estado) {									
+									if( esCentral )
+										SendTCPMessage( duplicado.getKey(), duplicado.getValue().intValue() ,(Object ) agricultor );
+								}
+							
 							gui.EnviarMensajeExito();
 							break;
 						
 						case ERROR: //Notificar que el usuario no se pudo Registrar
 							gui.EnviarMensajeError();
-							s.close();
 							break;
 							
 						default:
 							break;
 						
 					}
-					
 				}else if ( dato instanceof String) {
 					//Comunicacion Servidor -> Servidor
-					
-				}else if ( dato instanceof Zona ) {
+					String mensaje = (String) dato;
+					if( mensaje.equals("ping"))
+						out.writeChars( "ACK" );
+					else if (mensaje.equals("ACK"))
+					{
+						synchronized ( estado )
+						{
+							estado = mensaje;
+						}
+					}
+					else if( mensaje.equals("solicitud")) {
+						int tam = zonas.size()/2;
+						while (tam > 0) {
+							Zona zone = zonas.remove( tam );
+							SendTCPMessage( duplicado.getKey() , duplicado.getValue() , zone );
+							tam--;
+						}
+					}
+					}else if ( dato instanceof Zona ) {
 					//Comunicacion Coordinador -> Servidor
 					synchronized ( this ) {						
 						zonas.add( (Zona) dato );
 					}
 				}
 				
+				s.close();
 				
 			}
 
@@ -216,129 +238,28 @@ public class ServerThread extends Thread{
 			e.printStackTrace();
 		} 
 	}
-}
-
-/*
-Datollego = (Dato) in.readObject();
-if (Datollego.getTipo()==1) //PUBLICADOOOOR
-{
-	Topico topic=Files.buscarPoslista(tops, Datollego.getTopico());			
-	if(topic!=null)
-	{
-		topic.getData_history().add(Datollego);
-	}
-	else
-	{
-		Topico topiconuevo=new Topico(Datollego.getTopico());
-		topiconuevo.addData(Datollego);
-		tops.add(topiconuevo);
-	}
-	//System.out.println("4");					
-	//outdata.writeUTF("--PUBLICADO CORRECTAMENTE--");
-	outdata.write(1);					
-	//System.out.println("3");
-	//System.out.println("-------------------------------------------------\n"+tops.toString());
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-}
-if (Datollego.getTipo()==2)//DATOS AGRICULTOR
-{
-	boolean esta=false;
-	//System.out.println("->"+Datollego.getAgricultor().toString());
-
-	if(Datollego.getAgricultor().getId()==-1)
-	{	
-		Datollego.getAgricultor().setId(id);
-		outdata.writeInt(id);
-		(id)++;
-	}
-	agrs.add(Datollego.getAgricultor());
-	//System.out.println("-->>"+Datollego.getAgricultor().toString());
-	for (String suscrib : Datollego.getAgricultor().getTopicos())
-	{
-		for (Topico topic : tops) {
-			esta=false;
-			if(topic.getNombre().equals(suscrib))
-			{
-				for (Agricultor agric : topic.getAgricultor()) {
-					if(agric.getId()==Datollego.getAgricultor().getId())
-					{
-						esta=true;
-						break;
+	
+	
+	public void ping() {
+		
+		while( true ) {			
+			try {
+				synchronized( estado ) {
+					estado = "no_response";
+				}
+				SendTCPMessage( duplicado.getKey(), duplicado.getValue(), (Object) "ping");
+				sleep( 300 );
+				synchronized( estado ) {
+					esCentral = estado.equals("no_response");
+					if( esCentral ) {
+						zonas = new ArrayList( Arrays.asList( Zona.Norte, Zona.Oeste, Zona.Sur, Zona.Este) ) ;
 					}
 				}
-				if(esta==false)
-				{
-					topic.getAgricultor().add(Datollego.getAgricultor());									
-				}
-			}
-		}						
-	}
-	//System.out.println(tops.toString());
-
-}
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-if (Datollego.getTipo()==99)//Actualizar informacion interfasserver
-{
-	//System.out.println("ENTREEEE");
-	Dato datooolista=new Dato();
-	datooolista.setTopicos2(tops);
-	//System.out.println("TENGO: "+datooolista.gettops().size());	
-	out.writeObject((Object)datooolista);
-
-}
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-if (Datollego.getTipo()==100)//Actualizar CONSULTA interfasserver
-{
-	//System.out.println("ENTREEEE100");
-	Dato datooolista=new Dato();
-	Topico topictemp = null;
-	for (Topico topic : tops) {
-		if(topic.getNombre().equals(Datollego.getTopico()))
-		{
-			topictemp=new Topico(topic.getNombre());
-			for (Agricultor agri : topic.getAgricultor()) {
-				topictemp.getAgricultor().add(agri);							
+				sleep( 2000 );
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
-	datooolista.getTopicos2().add(topictemp);
-	//System.out.println("TENGO100: "+datooolista.gettops().size());	
-
-	out.writeObject((Object)datooolista);
 }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-if (Datollego.getTipo()==98)//Actualizar informacion interfas user
-{
-	//System.out.println("\n*****************************\n"+Datollego.toString()+"\n***********************");
-
-	Agricultor agricultor=new Agricultor();
-	Dato datooolista=new Dato();
-
-	//System.out.println("ENTRE 98");
-	agricultor=Datollego.getAgricultor();
-	//System.out.println("\n*****************************\n"+agricultor.toString()+"\n***********************");
-	for (String topi : agricultor.getTopicos()) {
-		for (Topico topico : tops) {
-			if(topico.getNombre().equals(topi))
-			{
-				//datooolista.gettops().add(topico);
-				Topico topicotemp=new Topico(topi);
-				//System.out.println("--------------TOPICAO: "+topi+"\n-----datooo---------------------------------------");
-				for (Dato datooo:topico.getData_history())
-				{
-					topicotemp.addData(datooo);
-				}
-				datooolista.getTopicos2().add(topicotemp);
-
-			}
-		}
-	}
-	try {
-		out.flush();
-	} catch (Exception e) {
-		//System.out.println("NO flush");
-	}
-	out.writeObject((Object)datooolista);
-
-	//out.flush();
-}*/
