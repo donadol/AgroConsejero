@@ -13,8 +13,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 
 import org.jspace.ActualField;
@@ -34,19 +32,15 @@ public class ServerThread extends Thread{
 	private String operacion;
 	private boolean esCentral;
 	private Entry< String, Integer > duplicado;
-	
 	private static ServerInterface gui;
-	private static ArrayList< Zona > zonas;
-	
+	private static ArrayList< Zona > zonas;	
 	public static int id=0;
 
-	public  ServerThread ( String operacion ) 
-	{
-		
+	public  ServerThread ( String operacion, Servidor servidor ) {
 		this.operacion = operacion;
+		this.servidor = servidor;
 		this.start();
 	}
-
 	
 	public static void SendTCPMessage( String host, int puerto , Object obj ) {
 		
@@ -146,7 +140,7 @@ public void escuchar() {
 			
 			if( !esCentral ) {
 				SendTCPMessage( duplicado.getKey(), duplicado.getValue(), "solicitud");
-				ServerThread s_ping = new ServerThread("ping");
+				ServerThread s_ping = new ServerThread("ping", servidor);
 			}
 			
 			while(true)
@@ -252,7 +246,7 @@ public void escuchar() {
 				synchronized( estado ) {
 					esCentral = estado.equals("no_response");
 					if( esCentral ) {
-						zonas = new ArrayList( Arrays.asList( Zona.Norte, Zona.Oeste, Zona.Sur, Zona.Este) ) ;
+						zonas = new ArrayList( Arrays.asList( Zona.Norte, Zona.Oriente, Zona.Sur, Zona.Occidente) ) ;
 					}
 				}
 				sleep( 2000 );

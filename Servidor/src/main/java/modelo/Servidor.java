@@ -73,7 +73,7 @@ public class Servidor {
 		ArrayList< Agricultor >destinatarios = new ArrayList<Agricultor>();
 		for( Agricultor agricultor: agricultores ) {
 			
-			if( agricultor.getCultivos().getZona() == zona) {
+			if( agricultor.getCultivo().getZona() == zona) {
 				
 				for (Topico topi : agricultor.getTopicos()) {
 						if(noticia.getTopicos().contains( topi )) {

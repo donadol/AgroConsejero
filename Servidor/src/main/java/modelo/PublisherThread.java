@@ -1,9 +1,7 @@
 package modelo;
 
-import java.io.IOException;
 import java.util.List;
 
-import org.jspace.FormalField;
 import org.jspace.Space;
 
 import entidadesTransversales.*;
@@ -12,10 +10,8 @@ import utils.FileUtils;
 public class PublisherThread implements Runnable{
 	private Space info;
 	private List<Informacion> noticias;
-	private List<Topico>topicos;
 	public PublisherThread(Space info, List<Topico>topicos){
 		this.info = info;
-		this.topicos = topicos;
 		noticias = FileUtils.leerInformacion(topicos);
 	}
 	public void run() {

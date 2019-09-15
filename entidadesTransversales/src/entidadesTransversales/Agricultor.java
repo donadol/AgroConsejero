@@ -13,7 +13,7 @@ public class Agricultor implements Serializable{
 	private List<Topico> topicos;
 	private int puerto;
 	private String host;
-
+	private Cultivo cultivo;
 
 	public Agricultor() {
 		// TODO Auto-generated constructor stub
@@ -70,5 +70,12 @@ public class Agricultor implements Serializable{
 		this.host = host;
 	}
 
+	public Cultivo getCultivo() {
+		return cultivo;
+	}
+
+	public void setCultivo(Cultivo cultivo) {
+		this.cultivo = cultivo;
+	}
 	
 }

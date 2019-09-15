@@ -1,6 +1,5 @@
 package vista;
 
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,34 +13,12 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import controlador.ServerThread;
-
-public class ServerInterface extends JFrame{
+public class ServerInterface extends JFrame implements Runnable{
 
 	private JPanel contentPane;
 	private JTable Historial;
 	private int puerto =7896;
 	private JTable suscritos;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ServerInterface frame = new ServerInterface();
-					frame.setVisible(true);
-					
-					ServerThread hiloEscucha = new ServerThread("escuchar");
-					//ServerThread hiloAtender = new ServerThread("atender"); descomentar cuando se ingrese el codigo de noticia
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
@@ -107,5 +84,9 @@ public class ServerInterface extends JFrame{
 	
 	public void EnviarMensajeError() {
 		//TO DO
+	}
+
+	public void run() {
+		this.setVisible(true);
 	}
 }
