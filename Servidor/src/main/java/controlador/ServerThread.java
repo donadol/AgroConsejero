@@ -105,8 +105,15 @@ public class ServerThread extends Thread{
 		
 		while( true ) {			
 			//To do: COLOCAR CODIGO DE VERIFICAR QUE UNA NOTICIA LLEGO AL SISTEMA
+			Object[] tupla;
+			int i=-1;
 			try {
-				Object[] tupla = servidor.getInfo().get(new FormalField(Informacion.class), new ActualField(Zona.Norte));//Cambiar lo de zona
+				do {
+					i++;
+					if(i==servidor.getZonas().size())
+						i=0; 
+					tupla = servidor.getInfo().getp(new FormalField(Informacion.class), new ActualField(servidor.getZonas().get(i)));
+				}while(tupla==null);
 				ArrayList< Agricultor > destinatarios = new ArrayList< Agricultor >();
 				Informacion noticia = (Informacion)tupla[0];
 				synchronized( this ) {

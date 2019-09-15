@@ -2,6 +2,8 @@ package modelo;
 
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.jspace.Space;
 import entidadesTransversales.*;
 
@@ -9,6 +11,7 @@ public class Servidor {
 	
 	private ArrayList < Agricultor > agricultores;
 	Space info;
+	private List <Zona>zonas;
 	public enum EstadoUsuario { SUSCRIBIR , INICIAR_SESION, ERROR }  
 	
 	public Servidor(Space info) {
@@ -22,6 +25,14 @@ public class Servidor {
 
 	public void setInfo(Space info) {
 		this.info = info;
+	}
+
+	public List<Zona> getZonas() {
+		return zonas;
+	}
+
+	public void setZonas(List<Zona> zonas) {
+		this.zonas = zonas;
 	}
 
 	public EstadoUsuario ValidarUsuario( Agricultor agricultor ) {
