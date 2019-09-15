@@ -1,6 +1,9 @@
 package controlador;
 
+
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -12,33 +15,46 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-
-import org.jspace.ActualField;
-import org.jspace.FormalField;
-
 import java.util.Set;
 
-import entidadesTransversales.*;
-import vista.ServerInterface;
-import modelo.Servidor;
+import javax.swing.JOptionPane;
 
+import vista.ServerInterface;
+import modelo.Agricultor;
+import modelo.Informacion;
+import modelo.Topico;
+import modelo.Zona;
+import modelo.Servidor;
+import modelo.Servidor.EstadoUsuario;
+
+
+/**
+ * @author acer
+ *
+ */
 public class ServerThread extends Thread{
 	
 	private int puerto = 4200;
-	private Coordinador coordinador;
-	private Servidor servidor;
+	private static String estado;
+	private static Servidor servidor;
 	private String operacion;
+	private boolean esCentral;
+	private Entry< String, Integer > duplicado;
 	
 	private static ServerInterface gui;
 	private static ArrayList< Zona > zonas;
-	private HashMap< String, Integer >servidores;
 	
 	public static int id=0;
 
-	public  ServerThread ( String operacion ) {
+	public  ServerThread ( String operacion ) 
+	{
+		
 		this.operacion = operacion;
 		this.start();
 	}
@@ -90,13 +106,14 @@ public class ServerThread extends Thread{
 		}
 	}
 	
-	public void run() {           		  
+	public void run() 
+	{           		  
 		if( operacion.equals("atender"))
 			atender();
-		else if (operacion.equals("escuchar")) {
-			coordinador = new Coordinador("elegir", servidores);
+		else if (operacion.equals("escuchar")) 
 			escuchar();
-		}
+		else if (operacion.equals("ping"))
+			ping();
 			
 	} // end run
 	
@@ -105,42 +122,35 @@ public class ServerThread extends Thread{
 		
 		while( true ) {			
 			//To do: COLOCAR CODIGO DE VERIFICAR QUE UNA NOTICIA LLEGO AL SISTEMA
-			Object[] tupla;
-			int i=-1;
-			try {
-				do {
-					i++;
-					if(i==servidor.getZonas().size())
-						i=0; 
-					tupla = servidor.getInfo().getp(new FormalField(Informacion.class), new ActualField(servidor.getZonas().get(i)));
-				}while(tupla==null);
 				ArrayList< Agricultor > destinatarios = new ArrayList< Agricultor >();
-				Informacion noticia = (Informacion)tupla[0];
+				Informacion noticia = new Informacion();
 				synchronized( this ) {
 					for( Zona zone: zonas) {
 						destinatarios.addAll( servidor.filtrar( noticia, zone ) ); 
-					}
-					for( Agricultor destinatario : destinatarios) {
-						SendUDPMessage( destinatario.getHost(), puerto , destinatario.getPuerto(), (Object)noticia );
-					}
 				}
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
+				for( Agricultor destinatario : destinatarios) {
+					
+					SendUDPMessage( destinatario.getHost(), puerto , destinatario.getPuerto(), (Object)noticia );
+				}
+			}
 		}
 	}
 	
 	
-	public void escuchar() {
+public void escuchar() {
 		try 
 		{	
 			Object dato;
 			ServerSocket ss = new ServerSocket ( puerto );
 			Set< Entry < String, Integer> > datosServidores;
 			
+			if( !esCentral ) {
+				SendTCPMessage( duplicado.getKey(), duplicado.getValue(), "solicitud");
+				ServerThread s_ping = new ServerThread("ping");
+			}
+			
 			while(true)
-			{
+			{		
 				Socket s;
 				s = ss.accept();
 				ObjectInputStream in = new ObjectInputStream( s.getInputStream() );
@@ -157,54 +167,66 @@ public class ServerThread extends Thread{
 						case INICIAR_SESION:
 							synchronized ( this ) {
 								servidor.setPuerto( agricultor, s );
-								datosServidores = servidores.entrySet();
 							}
-							if( Coordinador.getIp().equals("localhost") ) {
-								agricultor.setHost( s.getInetAddress().getHostAddress() );
-								agricultor.setPuerto( s.getPort() );
-								
-								for( Entry<String, Integer> server : datosServidores )
-								{	
-									SendTCPMessage( server.getKey(), server.getValue().intValue() ,(Object ) agricultor );
+							synchronized ( estado ) {								
+								if( esCentral ) {
+									agricultor.setHost( s.getInetAddress().getHostAddress() );
+									agricultor.setPuerto( s.getPort() );
+									
+									SendTCPMessage( duplicado.getKey(), duplicado.getValue().intValue() ,(Object ) agricultor );
+									gui.EnviarMensajeExito();
 								}
-								gui.EnviarMensajeExito();
 							}
 							break;
+							
 						case SUSCRIBIR: //Suscribir un usuario a todos los servidores activos
-							synchronized( this ) {
-								servidor.RegistrarUsuario(agricultor);
-								datosServidores = servidores.entrySet();
-							}
-							if( Coordinador.getIp().equals("localhost") ) {								
-								for( Entry<String, Integer> server : datosServidores )
-								{	
-									SendTCPMessage( server.getKey(), server.getValue().intValue() ,(Object ) agricultor );
+								synchronized( this ) {
+									servidor.RegistrarUsuario(agricultor);
 								}
-							}
-							s.close();	
+								synchronized (estado) {									
+									if( esCentral )
+										SendTCPMessage( duplicado.getKey(), duplicado.getValue().intValue() ,(Object ) agricultor );
+								}
+							
 							gui.EnviarMensajeExito();
 							break;
 						
 						case ERROR: //Notificar que el usuario no se pudo Registrar
 							gui.EnviarMensajeError();
-							s.close();
 							break;
 							
 						default:
 							break;
 						
 					}
-					
 				}else if ( dato instanceof String) {
 					//Comunicacion Servidor -> Servidor
-					
-				}else if ( dato instanceof Zona ) {
+					String mensaje = (String) dato;
+					if( mensaje.equals("ping"))
+						out.writeChars( "ACK" );
+					else if (mensaje.equals("ACK"))
+					{
+						synchronized ( estado )
+						{
+							estado = mensaje;
+						}
+					}
+					else if( mensaje.equals("solicitud")) {
+						int tam = zonas.size()/2;
+						while (tam > 0) {
+							Zona zone = zonas.remove( tam );
+							SendTCPMessage( duplicado.getKey() , duplicado.getValue() , zone );
+							tam--;
+						}
+					}
+					}else if ( dato instanceof Zona ) {
 					//Comunicacion Coordinador -> Servidor
 					synchronized ( this ) {						
 						zonas.add( (Zona) dato );
 					}
 				}
 				
+				s.close();
 				
 			}
 
@@ -215,6 +237,30 @@ public class ServerThread extends Thread{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
+	}
+	
+	
+	public void ping() {
+		
+		while( true ) {			
+			try {
+				synchronized( estado ) {
+					estado = "no_response";
+				}
+				SendTCPMessage( duplicado.getKey(), duplicado.getValue(), (Object) "ping");
+				sleep( 300 );
+				synchronized( estado ) {
+					esCentral = estado.equals("no_response");
+					if( esCentral ) {
+						zonas = new ArrayList( Arrays.asList( Zona.Norte, Zona.Oeste, Zona.Sur, Zona.Este) ) ;
+					}
+				}
+				sleep( 2000 );
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }
 
