@@ -1,11 +1,7 @@
 
 package controlador;
 
-import java.net.InetAddress;
 import java.util.HashMap;
-import java.util.Map.Entry;
-
-import modelo.Servidor;
 
 public class Coordinador extends Thread {
 
@@ -33,12 +29,7 @@ public class Coordinador extends Thread {
 			
 			if( operacion.equals( "elegir" ) ) {
 				
-				for( Entry < String, Integer> entry : servidores.entrySet()) {
-					if( entry.getKey().equals( InetAddress.getLocalHost().getHostAddress() ))
-						break;
-					else
-						ServerThread.SendTCPMessage( entry.getKey() , entry.getValue() , "elegir");
-				}
+			
 			}
 			
 		}

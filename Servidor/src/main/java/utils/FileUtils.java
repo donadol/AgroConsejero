@@ -1,44 +1,54 @@
 package utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import modelo.Informacion;
-import modelo.Topico;
+import entidadesTransversales.*;
+
 
 public class FileUtils {
 	
-	private Topico getTopicoBySubtopic(String nombre, List<Topico>topicos) {
-		
-		
+	private static Topico getTopicoBySubtopico(String nombre, List<Topico>topicos) {
+		for(int i=0; i<topicos.size();++i) {
+			for(int j=0; j<topicos.get(i).getSubtopicos().size();++j) {
+				if(topicos.get(i).getSubtopicos().get(j).equals(nombre)) {
+					return topicos.get(i);
+				}
+			}
+		}
 		return null;
 	}
-	public static List<Informacion> leerInformacion(List<Topico>topicos) throws IOException{
+	public static List<Informacion> leerInformacion(List<Topico>topicos){
 		List<Informacion> info = new ArrayList<Informacion>();
 		Informacion aux;
-		List<Topico> topicos_aux;
-		String contenido = new String(Files.readAllBytes(Paths.get("informacion.json")));
-		JSONObject json = new JSONObject(contenido);
-		JSONArray infoJson = json.getJSONArray("informacion");
-		for(int i = 0; i<infoJson.length(); ++i) {
-			JSONObject jsonObj = infoJson.getJSONObject(i);
-			aux = new Informacion(Integer.parseInt(jsonObj.getString("tipo")), jsonObj.getString("titulo"), jsonObj.getString("descripcion"), Integer.parseInt(jsonObj.getString("tiempo")));
-			JSONArray tagsInfo = jsonObj.getJSONArray("tags");
-			
+		List<Topico> topicos_aux = null;
+		String contenido = "";
+		try {
+			contenido = new String(Files.readAllBytes(Paths.get("informacion.json")));
+			JSONObject json = new JSONObject(contenido);
+			JSONArray infoJson = json.getJSONArray("informacion");
+			for(int i = 0; i<infoJson.length(); ++i) {
+				JSONObject jsonObj = infoJson.getJSONObject(i);
+				aux = new Informacion(Zona.valueOf(jsonObj.getString("zona")), jsonObj.getString("titulo"), jsonObj.getString("descripcion"), Integer.parseInt(jsonObj.getString("tiempo")));
+				System.out.println(aux);
+				JSONArray tagsInfo = jsonObj.getJSONArray("tags");
+				topicos_aux = new ArrayList<Topico>();
+				for(int j = 0; j<tagsInfo.length(); ++j) {
+					topicos_aux.add(getTopicoBySubtopico(tagsInfo.getString(j), topicos));
+				}
+				aux.setTopicos(topicos_aux);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
-		
 		return info;
+	}
+	public static void main(String[] args) {
+		leerInformacion(null);
 	}
 }
