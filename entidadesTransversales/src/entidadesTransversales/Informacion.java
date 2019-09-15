@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Informacion implements Serializable{
 	private static final long serialVersionUID = 1L;
-	private int tipo;
+	private Zona zona;
 	private String titulo;
 	private String descripcion;
 	private int tiempo;
@@ -17,10 +17,10 @@ public class Informacion implements Serializable{
 		topicos= new ArrayList <Topico>();
 	}
 	
-	public Informacion(int tipo, String titulo, String descripcion, int tiempo) {
+	public Informacion(Zona zona, String titulo, String descripcion, int tiempo) {
 		super();
 		this.titulo=titulo;
-		this.tipo = tipo;
+		this.zona = zona;
 		this.descripcion = descripcion;
 		this.tiempo = tiempo;
 		topicos = new ArrayList<Topico>();
@@ -44,11 +44,11 @@ public class Informacion implements Serializable{
 	public void setTopicos(List<Topico> topicos) {
 		this.topicos = topicos;
 	}
-	public int getTipo() {
-		return tipo;
+	public Zona getZona() {
+		return zona;
 	}
-	public void setTipo(int tipo) {
-		this.tipo = tipo;
+	public void setZona(Zona zona) {
+		this.zona = zona;
 	}
 	public String getDescripcion() {
 		return descripcion;
@@ -59,7 +59,7 @@ public class Informacion implements Serializable{
 
 	@Override
 	public String toString() {
-		String data= "Informacion [tipo=" + tipo + ", titulo=" + titulo + ", descripcion=" + descripcion + ", tiempo="
+		String data= "Informacion [zona=" + zona + ", titulo=" + titulo + ", descripcion=" + descripcion + ", tiempo="
 				+ tiempo + "]";
 		for(int i =0; i<this.topicos.size(); ++i) {
 			data.concat(this.topicos.get(i).toString()+" ");

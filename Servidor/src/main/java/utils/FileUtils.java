@@ -34,7 +34,7 @@ public class FileUtils {
 			JSONArray infoJson = json.getJSONArray("informacion");
 			for(int i = 0; i<infoJson.length(); ++i) {
 				JSONObject jsonObj = infoJson.getJSONObject(i);
-				aux = new Informacion(Integer.parseInt(jsonObj.getString("tipo")), jsonObj.getString("titulo"), jsonObj.getString("descripcion"), Integer.parseInt(jsonObj.getString("tiempo")));
+				aux = new Informacion(Zona.valueOf(jsonObj.getString("zona")), jsonObj.getString("titulo"), jsonObj.getString("descripcion"), Integer.parseInt(jsonObj.getString("tiempo")));
 				System.out.println(aux);
 				JSONArray tagsInfo = jsonObj.getJSONArray("tags");
 				topicos_aux = new ArrayList<Topico>();

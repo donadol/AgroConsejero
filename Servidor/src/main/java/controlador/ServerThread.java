@@ -1,6 +1,5 @@
 package controlador;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,18 +13,18 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
+
+import org.jspace.ActualField;
+import org.jspace.FormalField;
+
 import java.util.Set;
 
 import entidadesTransversales.*;
 import vista.ServerInterface;
 import modelo.Servidor;
 
-
-/**
- * @author acer
- *
- */
 public class ServerThread extends Thread{
 	
 	private int puerto = 4200;
@@ -39,8 +38,7 @@ public class ServerThread extends Thread{
 	
 	public static int id=0;
 
-	public  ServerThread ( String operacion ) 
-	{
+	public  ServerThread ( String operacion ) {
 		this.operacion = operacion;
 		this.start();
 	}
@@ -92,11 +90,10 @@ public class ServerThread extends Thread{
 		}
 	}
 	
-	public void run() 
-	{           		  
+	public void run() {           		  
 		if( operacion.equals("atender"))
 			atender();
-	 else if (operacion.equals("escuchar")) {
+		else if (operacion.equals("escuchar")) {
 			coordinador = new Coordinador("elegir", servidores);
 			escuchar();
 		}
@@ -108,17 +105,22 @@ public class ServerThread extends Thread{
 		
 		while( true ) {			
 			//To do: COLOCAR CODIGO DE VERIFICAR QUE UNA NOTICIA LLEGO AL SISTEMA
+			try {
+				Object[] tupla = servidor.getInfo().get(new FormalField(Informacion.class), new ActualField(Zona.Norte));//Cambiar lo de zona
 				ArrayList< Agricultor > destinatarios = new ArrayList< Agricultor >();
-				Informacion noticia = new Informacion();
+				Informacion noticia = (Informacion)tupla[0];
 				synchronized( this ) {
 					for( Zona zone: zonas) {
 						destinatarios.addAll( servidor.filtrar( noticia, zone ) ); 
+					}
+					for( Agricultor destinatario : destinatarios) {
+						SendUDPMessage( destinatario.getHost(), puerto , destinatario.getPuerto(), (Object)noticia );
+					}
 				}
-				for( Agricultor destinatario : destinatarios) {
-					
-					SendUDPMessage( destinatario.getHost(), puerto , destinatario.getPuerto(), (Object)noticia );
-				}
-			}
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
 		}
 	}
 	
