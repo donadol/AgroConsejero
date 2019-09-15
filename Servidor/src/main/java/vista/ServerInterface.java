@@ -1,5 +1,4 @@
-package main.java.Agroconsejero.Server;
-
+package vista;
 
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -23,9 +22,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import controller.ServerThread;
-import model.Agricultor;
-import model.Topico;
+import controlador.ServerThread;
+import modelo.Agricultor;
+import modelo.Topico;
 
 public class ServerInterface extends JFrame{
 

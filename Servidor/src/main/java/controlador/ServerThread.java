@@ -1,4 +1,5 @@
-package controller;
+package controlador;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -23,13 +24,14 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import main.java.Agroconsejero.Server.ServerInterface;
-import model.Agricultor;
-import model.Informacion;
-import model.Topico;
-import model.Zona;
-import model.Servidor;
-import model.Servidor.EstadoUsuario;
+import vista.ServerInterface;
+import modelo.Agricultor;
+import modelo.Informacion;
+import modelo.Topico;
+import modelo.Zona;
+import modelo.Servidor;
+import modelo.Servidor.EstadoUsuario;
+
 
 /**
  * @author acer
@@ -51,7 +53,6 @@ public class ServerThread extends Thread{
 	public  ServerThread ( String operacion ) 
 	{
 		this.operacion = operacion;
-		//this.coordinador = new Coordinador("elegir");
 		this.start();
 	}
 
@@ -106,8 +107,10 @@ public class ServerThread extends Thread{
 	{           		  
 		if( operacion.equals("atender"))
 			atender();
-		else if (operacion.equals("escuchar"))
+	 else if (operacion.equals("escuchar")) {
+			coordinador = new Coordinador("elegir", servidores);
 			escuchar();
+		}
 			
 	} // end run
 	
@@ -116,7 +119,7 @@ public class ServerThread extends Thread{
 		
 		while( true ) {			
 			//To do: COLOCAR CODIGO DE VERIFICAR QUE UNA NOTICIA LLEGO AL SISTEMA
-				ArrayList< Agricultor > destinatarios = new ArrayList<>();
+				ArrayList< Agricultor > destinatarios = new ArrayList< Agricultor >();
 				Informacion noticia = new Informacion();
 				synchronized( this ) {
 					for( Zona zone: zonas) {
