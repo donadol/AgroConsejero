@@ -2,8 +2,6 @@ package controlador;
 
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,22 +13,13 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
-
+import entidadesTransversales.*;
 import vista.ServerInterface;
-import modelo.Agricultor;
-import modelo.Informacion;
-import modelo.Topico;
-import modelo.Zona;
 import modelo.Servidor;
-import modelo.Servidor.EstadoUsuario;
 
 
 /**

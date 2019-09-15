@@ -1,10 +1,6 @@
-/**
- * 
- */
-package modelo;
+package entidadesTransversales;
 
 import java.io.Serializable;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 

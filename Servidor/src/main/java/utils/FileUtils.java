@@ -8,8 +8,8 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import modelo.Informacion;
-import modelo.Topico;
+import entidadesTransversales.*;
+
 
 public class FileUtils {
 	

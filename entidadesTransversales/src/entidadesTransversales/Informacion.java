@@ -1,4 +1,4 @@
-package modelo;
+package entidadesTransversales;
 
 import java.io.Serializable;
 import java.util.ArrayList;

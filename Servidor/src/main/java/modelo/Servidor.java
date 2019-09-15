@@ -3,6 +3,8 @@ package modelo;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import entidadesTransversales.*;
+
 public class Servidor {
 	
 	private ArrayList < Agricultor > agricultores;

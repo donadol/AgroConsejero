@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.jspace.Space;
 
+import entidadesTransversales.*;
 import utils.FileUtils;
 
 public class PublisherThread implements Runnable{
