@@ -1,3 +1,4 @@
+
 package controlador;
 
 import java.util.HashMap;
@@ -32,6 +33,7 @@ public class Coordinador extends Thread {
 			}
 			
 		}
+		
 	}
 
 	public static String getIp() {
@@ -40,7 +42,5 @@ public class Coordinador extends Thread {
 
 	public static void setIp(String ip_addr) {
 		ip = ip_addr;
-	}
-
-	
+	}	
 }

@@ -1,5 +1,6 @@
 package controlador;
 
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -31,6 +32,7 @@ import modelo.Zona;
 import modelo.Servidor;
 import modelo.Servidor.EstadoUsuario;
 
+
 /**
  * @author acer
  *
@@ -48,7 +50,6 @@ public class ServerThread extends Thread{
 	
 	public static int id=0;
 
-	
 	public  ServerThread ( String operacion ) 
 	{
 		this.operacion = operacion;
@@ -106,7 +107,7 @@ public class ServerThread extends Thread{
 	{           		  
 		if( operacion.equals("atender"))
 			atender();
-		else if (operacion.equals("escuchar")) {
+	 else if (operacion.equals("escuchar")) {
 			coordinador = new Coordinador("elegir", servidores);
 			escuchar();
 		}
