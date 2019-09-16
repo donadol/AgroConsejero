@@ -10,22 +10,20 @@ public class Informacion implements Serializable{
 	private String titulo;
 	private String descripcion;
 	private int tiempo;
-	private List<Topico> topicos;
+	private Topico topico;
 	
 	public Informacion() {
 		super();
-		topicos= new ArrayList <Topico>();
 	}
 	
-	public Informacion(Zona zona, String titulo, String descripcion, int tiempo) {
+	public Informacion(Zona zona, String titulo, String descripcion, int tiempo, Topico topico) {
 		super();
-		this.titulo=titulo;
 		this.zona = zona;
+		this.titulo = titulo;
 		this.descripcion = descripcion;
 		this.tiempo = tiempo;
-		topicos = new ArrayList<Topico>();
+		this.topico = topico;
 	}
-	
 	public String getTitulo() {
 		return titulo;
 	}
@@ -38,11 +36,11 @@ public class Informacion implements Serializable{
 	public void setTiempo(int tiempo) {
 		this.tiempo = tiempo;
 	}
-	public List<Topico> getTopicos() {
-		return topicos;
+	public Topico getTopico() {
+		return topico;
 	}
-	public void setTopicos(List<Topico> topicos) {
-		this.topicos = topicos;
+	public void setTopico(Topico topico) {
+		this.topico = topico;
 	}
 	public Zona getZona() {
 		return zona;
@@ -59,12 +57,8 @@ public class Informacion implements Serializable{
 
 	@Override
 	public String toString() {
-		String data= "Informacion [zona=" + zona + ", titulo=" + titulo + ", descripcion=" + descripcion + ", tiempo="
-				+ tiempo + "]";
-		for(int i =0; i<this.topicos.size(); ++i) {
-			data.concat(this.topicos.get(i).toString()+" ");
-		}
-		return data;
+		return "Informacion [zona=" + zona + ", titulo=" + titulo + ", descripcion=" + descripcion + ", tiempo="
+				+ tiempo + ", topico=" + topico + "]";
 	}
 	
 }

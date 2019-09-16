@@ -76,7 +76,7 @@ public class Servidor {
 			if( agricultor.getCultivo().getZona() == zona) {
 				
 				for (Topico topi : agricultor.getTopicos()) {
-						if(noticia.getTopicos().contains( topi )) {
+						if(noticia.getTopico().equals( topi )) {
 							destinatarios.add( agricultor );
 							break;
 						}
