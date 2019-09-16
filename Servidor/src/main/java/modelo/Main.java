@@ -13,10 +13,14 @@ public class Main {
 	public static void main(String[] args) {
 		RemoteSpace info;
 		try {
-			info = new RemoteSpace("tcp://chathost:31415/info?keep");
+			info = new RemoteSpace("tcp://127.0.0.1:31415/info?keep");
 			Servidor server = new Servidor(info); 
 			
-			Thread frameThread = new Thread(new ServerInterface(), "Frame thread");
+			ServerInterface frame = new ServerInterface(); 
+			Thread frameThread = new Thread(frame, "Frame thread");
+			
+			ServerThread.setGui( frame );
+			ServerThread.setEstado("");
 			
 			ServerThread hiloEscucha = new ServerThread("escuchar", server);
 			ServerThread hiloAtender = new ServerThread("atender", server); 

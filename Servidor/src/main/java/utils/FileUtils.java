@@ -21,7 +21,7 @@ public class FileUtils {
 	public static List< List <String> > leerConfiguracionServidor( ) {
 		List< List< String > > servidores = new ArrayList< List <String> >();
 		try {
-			File archivo = new File("C:\\Users\\sistemas\\Documents\\Servidor\\server.config");
+			File archivo = new File("server.config");
 			BufferedReader br = new BufferedReader( new FileReader( archivo ) );
 			String linea;
 			while( (linea = br.readLine()) != null ) {

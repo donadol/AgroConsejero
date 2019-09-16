@@ -10,7 +10,7 @@ import entidadesTransversales.*;
 public class Servidor {
 	
 	private ArrayList < Agricultor > agricultores;
-	Space info;
+	private Space info;
 	private List <Zona>zonas;
 	public enum EstadoUsuario { SUSCRIBIR , INICIAR_SESION, ERROR }  
 	

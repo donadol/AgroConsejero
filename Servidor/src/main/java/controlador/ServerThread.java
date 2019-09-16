@@ -1,5 +1,7 @@
 package controlador;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -29,12 +31,14 @@ import modelo.Servidor;
 import utils.FileUtils;
 
 public class ServerThread extends Thread{
-	
+
 	private int puerto;
 	private static String estado;
 	private Servidor servidor;
 	private String operacion;
 	private boolean esCentral;
+	
+	//Servidor auxiliar
 	private Entry< String, Integer > duplicado;
 	private static ServerInterface gui;
 	public static int id=0;
@@ -46,17 +50,17 @@ public class ServerThread extends Thread{
 	public static void setGui(ServerInterface gui) {
 		ServerThread.gui = gui;
 		//gui.setVisible( true );
-	
+
 	}
 	public static void setEstado(String estado) {
 		ServerThread.estado = estado;
 	}
-	
+
 	public  ServerThread ( String operacion, Servidor servidor ) {
 		this.operacion = operacion;
 		this.servidor = servidor;
-		
-		
+
+
 		String host;
 		int puerto, prioridad;
 		List< List< String > >datos = FileUtils.leerConfiguracionServidor();
@@ -65,7 +69,7 @@ public class ServerThread extends Thread{
 			puerto = Integer.parseInt( lista.get(1));
 			prioridad = Integer.parseInt( lista.get(2) );
 			System.out.println( host + ":" + puerto + ":" + prioridad);
-			
+
 			try {
 				if( host.equals( InetAddress.getLocalHost().getHostAddress()) ) {
 					this.puerto = puerto;
@@ -81,14 +85,14 @@ public class ServerThread extends Thread{
 				e1.printStackTrace();
 			}
 		}
-		
+
 		this.start();
 	}
-	
+
 	public static void SendTCPMessage( String host, int puerto , Object obj ) {
-		
+
 		try {
-			
+
 			Socket socket = new Socket(host, puerto);
 			ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
 			out.writeObject( obj );
@@ -100,27 +104,27 @@ public class ServerThread extends Thread{
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
 			System.out.println("No se alcanzo el servidor auxiliar");
-			
+
 		}
-		
-		
+
+
 	}
-	
+
 	public static void SendUDPMessage( String host, int src_port, int dst_port, Object obj) {
 		try {
-			
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		ObjectOutputStream out = new ObjectOutputStream( buffer );
-		out.writeObject( obj );
-		out.flush();
-		byte [] data = buffer.toByteArray();
-		
-		DatagramSocket socket = new DatagramSocket( src_port );
-		DatagramPacket packet = new DatagramPacket( data, 0, data.length, InetAddress.getByName(host), dst_port);
-			
-		socket.send( packet );
-		
-		socket.close();
+
+			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+			ObjectOutputStream out = new ObjectOutputStream( buffer );
+			out.writeObject( obj );
+			out.flush();
+			byte [] data = buffer.toByteArray();
+
+			DatagramSocket socket = new DatagramSocket( src_port );
+			DatagramPacket packet = new DatagramPacket( data, 0, data.length, InetAddress.getByName(host), dst_port);
+
+			socket.send( packet );
+
+			socket.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -132,7 +136,7 @@ public class ServerThread extends Thread{
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void run() 
 	{           		  
 		if( operacion.equals("atender"))
@@ -141,35 +145,32 @@ public class ServerThread extends Thread{
 			escuchar();
 		else if (operacion.equals("ping"))
 			ping();
-			
+
 	} // end run
-	
+
 	public void atender() {
-		
-		
+
+
 		while( true ) {			
 			//To do: COLOCAR CODIGO DE VERIFICAR QUE UNA NOTICIA LLEGO AL SISTEMA
 			Object[] tupla = null;
 			int i=-1;
-			
+
 			try {
-					System.out.println( "El sistema tiene " + servidor.getAgricultores().size() );
-										
-						do {
-							if( servidor.getInfo().size() > 0) {
-																
-								i++;
-								if(i==servidor.getZonas().size())
-									i=0;
-								
-								tupla = servidor.getInfo().getp(new FormalField(Informacion.class), new ActualField(servidor.getZonas().get(i)));
-								//System.out.println( servidor.getInfo().size() );
-								
-							}	
-						}while(tupla==null);
+				System.out.println( "El sistema tiene " + servidor.getAgricultores().size() );
+
+				do {							
+					i++;
+					if(i==servidor.getZonas().size())
+						i=0;
+
+					tupla = servidor.getInfo().getp(new FormalField(Informacion.class), new ActualField(servidor.getZonas().get(i)));
+
+				}while(tupla==null);
+				System.out.println( (Informacion)tupla[0] );
 
 				System.out.println("Salio del while");
-				
+
 				ArrayList< Agricultor > destinatarios = new ArrayList< Agricultor >();
 				Informacion noticia = (Informacion)tupla[0];
 				synchronized( this ) {
@@ -180,7 +181,7 @@ public class ServerThread extends Thread{
 					for( Agricultor destinatario : destinatarios) {
 						SendUDPMessage( destinatario.getHost(), puerto , destinatario.getPort(), (Object)noticia );
 						gui.ActualizarLog("Envio", destinatario.getNombre(), destinatario.getCultivo().getZona().toString() , noticia.getTitulo() );
-						
+
 					}
 				}
 			} catch (InterruptedException e) {
@@ -189,84 +190,90 @@ public class ServerThread extends Thread{
 			} 
 		}
 	}
-	
-	
-public void escuchar() {
+
+
+	public void escuchar() {
 		Socket s = null; 
+		DatagramSocket ds = null;
 		ServerSocket ss = null;
-		
+
 		try 
 		{	
+			ds = new DatagramSocket ( puerto );
 			ss = new ServerSocket ( puerto );
 			Object dato;
 			Set< Entry < String, Integer> > datosServidores;
-			
+
 			if( !esCentral ) {
 				SendTCPMessage( duplicado.getKey(), duplicado.getValue(), "solicitud");
 				ServerThread s_ping = new ServerThread("ping", servidor);
 			}
-			
-			while(true)
-			{		
-				s = ss.accept();
-				ObjectInputStream in = new ObjectInputStream( s.getInputStream() );
+
+			while(true){
+				byte[] b = new byte[1024];
+				DatagramPacket dp = new DatagramPacket(b, 1024);
+				ds.receive(dp);
+				
+				ByteArrayInputStream br = new ByteArrayInputStream(b);
+				ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(br));
 				ObjectOutputStream out = new ObjectOutputStream( s.getOutputStream() );
-				
+
 				dato = in.readObject();
-				
+				System.out.println((Informacion)dato);
+
 				if( dato instanceof Agricultor) {
 					//Comunicacion Cliente -> Servidor
 					Agricultor agricultor = (Agricultor) dato;
-					System.out.println( "CULTIVO: " + agricultor.getCultivo() );
 					switch( servidor.ValidarUsuario(agricultor) ) {
-						
-						case INICIAR_SESION:
-							gui.ActualizarLog("Iniciar Sesion", agricultor.getNombre(), agricultor.getCultivo().getZona().toString() , "");
-							synchronized ( this ) {
-								servidor.setPuerto( agricultor, s );
+
+					case INICIAR_SESION:
+						gui.ActualizarLog("Iniciar Sesion", agricultor.getNombre(), agricultor.getCultivo().getZona().toString() , "");
+						synchronized ( this ) {
+							servidor.setPuerto( agricultor, s );
+						}
+						synchronized ( estado ) {								
+							if( esCentral ) {
+								agricultor.setHost( s.getInetAddress().getHostAddress() );
+								agricultor.setPort( s.getPort() );
+
+								SendTCPMessage( duplicado.getKey(), duplicado.getValue().intValue() ,(Object ) agricultor );
+								//gui.EnviarMensajeExito();
 							}
-							synchronized ( estado ) {								
-								if( esCentral ) {
-									agricultor.setHost( s.getInetAddress().getHostAddress() );
-									agricultor.setPort( s.getPort() );
-									
-									SendTCPMessage( duplicado.getKey(), duplicado.getValue().intValue() ,(Object ) agricultor );
-									//gui.EnviarMensajeExito();
-								}
+						}
+						break;
+
+					case SUSCRIBIR: //Suscribir un usuario a todos los servidores activos
+						System.out.println( "gui" +  gui );
+						//System.out.println( "cultivo" + agricultor.getCultivo() );
+						gui.ActualizarLog("Suscribir", agricultor.getNombre(), agricultor.getCultivo().getZona().toString() , "");
+						synchronized( this ) {
+							servidor.RegistrarUsuario(agricultor);
+
+						}
+						synchronized (estado) {									
+
+							if( esCentral ) {
+								agricultor.setHost( s.getInetAddress().getHostAddress() );
+								agricultor.setPort( s.getPort() );
+
+								SendTCPMessage( duplicado.getKey(), duplicado.getValue().intValue() ,(Object ) agricultor );
+
 							}
-							break;
-							
-						case SUSCRIBIR: //Suscribir un usuario a todos los servidores activos
-								System.out.println( "gui" +  gui );
-								//System.out.println( "cultivo" + agricultor.getCultivo() );
-								gui.ActualizarLog("Suscribir", agricultor.getNombre(), agricultor.getCultivo().getZona().toString() , "");
-								synchronized( this ) {
-									servidor.RegistrarUsuario(agricultor);
-									
-								}
-								synchronized (estado) {									
-									
-									if( esCentral ) {
-										agricultor.setHost( s.getInetAddress().getHostAddress() );
-										agricultor.setPort( s.getPort() );
-										
-										SendTCPMessage( duplicado.getKey(), duplicado.getValue().intValue() ,(Object ) agricultor );
-										
-									}
-									
-								}
-								
-								gui.EnviarMensajeExito( s );
-							break;
-						
-						case ERROR: //Notificar que el usuario no se pudo Registrar
-							gui.ActualizarLog("ERROR", agricultor.getNombre(), agricultor.getCultivo().getZona().toString() , "");
-							gui.EnviarMensajeError();
-							break;
-							
-						default:
-							break;
-						
+
+						}
+
+						//out.writeObject("RegistroExitoso");
+						SendUDPMessage(agricultor.getHost(), puerto, agricultor.getPort(), "RegistroExitoso");
+						break;
+
+					case ERROR: //Notificar que el usuario no se pudo Registrar
+						gui.ActualizarLog("ERROR", agricultor.getNombre(), agricultor.getCultivo().getZona().toString() , "");
+						gui.EnviarMensajeError();
+						break;
+
+					default:
+						break;
+
 					}
 				}else if ( dato instanceof String) {
 					//Comunicacion Servidor -> Servidor
@@ -291,7 +298,7 @@ public void escuchar() {
 							}
 						}
 					}
-					}else if ( dato instanceof Zona ) {
+				}else if ( dato instanceof Zona ) {
 					//Comunicacion Coordinador -> Servidor
 					synchronized ( this ) {						
 						servidor.getZonas().add( (Zona) dato );
@@ -306,12 +313,12 @@ public void escuchar() {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			
+
 			e.printStackTrace();
 		}
 		finally {
 			try {
-				
+
 				if( ss != null)
 					ss.close();
 			} catch (IOException e) {
@@ -320,10 +327,10 @@ public void escuchar() {
 			}
 		}
 	}
-	
-	
+
+
 	public void ping() {
-		
+
 		while( true ) {			
 			try {
 				synchronized( estado ) {

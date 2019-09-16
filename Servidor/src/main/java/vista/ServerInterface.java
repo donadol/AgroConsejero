@@ -67,7 +67,7 @@ public class ServerInterface extends JFrame implements Runnable{
 		ObjectOutputStream out;
 		try {
 			out = new ObjectOutputStream( clientSocket.getOutputStream() );
-			out.write( Integer.valueOf( clientSocket.getPort() ) );
+			out.writeObject( "informacionCorrecta" );
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
