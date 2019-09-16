@@ -7,11 +7,13 @@ public class Topico{
 	private String nombre;
 	private List<String> subtopicos;
 	
-	public Topico(String nombre) {
+	public Topico() {
+	}
+	public Topico(String nombre, List<String> subtopicos) {
 		super();
 		this.nombre = nombre;
+		this.subtopicos = subtopicos;
 	}
-
 	public String getNombre() {
 		return nombre;
 	}
