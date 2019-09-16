@@ -17,6 +17,15 @@ public class Servidor {
 	public Servidor(Space info) {
 		agricultores = new ArrayList<Agricultor>();
 		this.info = info;
+		zonas = new ArrayList<Zona>();
+	}
+	
+	public ArrayList<Agricultor> getAgricultores() {
+		return agricultores;
+	}
+
+	public void setAgricultores(ArrayList<Agricultor> agricultores) {
+		this.agricultores = agricultores;
 	}
 
 	public Space getInfo() {
@@ -69,6 +78,7 @@ public class Servidor {
 	}
 	
 	public ArrayList< Agricultor >filtrar( Informacion noticia, Zona zona){
+		
 		
 		ArrayList< Agricultor >destinatarios = new ArrayList<Agricultor>();
 		for( Agricultor agricultor: agricultores ) {

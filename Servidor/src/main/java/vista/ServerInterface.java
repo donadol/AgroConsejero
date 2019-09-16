@@ -3,6 +3,8 @@ package vista;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,7 +20,6 @@ public class ServerInterface extends JFrame implements Runnable{
 	private JPanel contentPane;
 	private JTable Historial;
 	private int puerto =7896;
-	private JTable suscritos;
 
 	/**
 	 * Create the frame.
@@ -32,16 +33,18 @@ public class ServerInterface extends JFrame implements Runnable{
 		contentPane.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(28, 77, 452, 209);
+		scrollPane.setBounds(28, 77, 578, 215);
 		contentPane.add(scrollPane);
 		
 		Historial = new JTable();
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		Historial.setModel(new DefaultTableModel
-				(
-				new Object[][] {},
-				new String[] {"Tiempo","Topico", "Noticia"}
-				));
+		Historial.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"Tiempo", "Operacion", "Cliente", "Zona", "Noticia"
+			}
+		));
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		scrollPane.setViewportView(Historial);
 		
@@ -49,33 +52,14 @@ public class ServerInterface extends JFrame implements Runnable{
 		lblServidor.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		lblServidor.setBounds(156, 22, 113, 37);
 		contentPane.add(lblServidor);
-		
-		JButton btnActaulizar = new JButton("ACTUALIZAR");
-		btnActaulizar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-				
-		}});
-		
-		btnActaulizar.setBounds(285, 22, 123, 37);
-		contentPane.add(btnActaulizar);
-		
-		JButton btnConsultar = new JButton("Consultar");
-		btnConsultar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-				
-			}
-		});
-		btnConsultar.setBounds(502, 77, 89, 23);
-		contentPane.add(btnConsultar);
-		
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(498, 111, 97, 175);
-		contentPane.add(scrollPane_1);
-		
-		suscritos = new JTable();
-		scrollPane_1.setViewportView(suscritos);
+		this.setVisible( true );
+	}
+	
+	public void ActualizarLog( String Operacion, String Cliente, String Zona, String Noticia ) {
+		DefaultTableModel table = (DefaultTableModel) Historial.getModel();
+		Date fecha = new Date (System.currentTimeMillis());
+		String formato_fecha = new SimpleDateFormat("hh:mm:ss").format( fecha );
+		table.addRow( new Object[]{ formato_fecha, Operacion, Cliente, Zona, Noticia} );
 	}
 	
 	public void EnviarMensajeExito() {

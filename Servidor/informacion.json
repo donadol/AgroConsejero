@@ -8,33 +8,6 @@
                 "papa"
             ],
             "tiempo": "0"
-        },
-        {
-            "titulo": "Precio yuca",
-            "descripcion": "Bajo el precio de la yuca llanera, $20.000 el bulto",
-            "tipo": "Oriente",
-            "tags": [
-                "yuca"
-            ],
-            "tiempo": "10"
-        },
-        {
-            "titulo": "Precio manzana",
-            "descripcion": "El precio de la manzana se mantuvo, $25.000 la canastilla",
-            "tipo": "Sur",
-            "tags": [
-                "manzana"
-            ],
-            "tiempo": "5"
-        },
-        {
-            "titulo": "Lluvia zona norte",
-            "descripcion": "En la zona norte debido a las fuertes lluvias los cultivos se están perdiendo",
-            "tipo": "Norte",
-            "tags": [
-                "lluvia"
-            ],
-            "tiempo": "5"
         }
     ]
 }

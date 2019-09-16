@@ -11,8 +11,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.jspace.ActualField;
@@ -23,22 +26,62 @@ import java.util.Set;
 import entidadesTransversales.*;
 import vista.ServerInterface;
 import modelo.Servidor;
+import utils.FileUtils;
 
 public class ServerThread extends Thread{
 	
-	private int puerto = 4200;
+	private int puerto;
 	private static String estado;
-	private static Servidor servidor;
+	private Servidor servidor;
 	private String operacion;
 	private boolean esCentral;
 	private Entry< String, Integer > duplicado;
 	private static ServerInterface gui;
-	private static ArrayList< Zona > zonas;	
 	public static int id=0;
 
+	public static ServerInterface getGui() {
+		return gui;
+	}
+
+	public static void setGui(ServerInterface gui) {
+		ServerThread.gui = gui;
+		//gui.setVisible( true );
+	
+	}
+	public static void setEstado(String estado) {
+		ServerThread.estado = estado;
+	}
+	
 	public  ServerThread ( String operacion, Servidor servidor ) {
 		this.operacion = operacion;
 		this.servidor = servidor;
+		
+		
+		String host;
+		int puerto, prioridad;
+		List< List< String > >datos = FileUtils.leerConfiguracionServidor();
+		for( List < String > lista : datos ) {
+			host = lista.get(0);
+			puerto = Integer.parseInt( lista.get(1));
+			prioridad = Integer.parseInt( lista.get(2) );
+			System.out.println( host + ":" + puerto + ":" + prioridad);
+			
+			try {
+				if( host.equals( InetAddress.getLocalHost().getHostAddress()) ) {
+					this.puerto = puerto;
+					if( prioridad == 1) {
+						esCentral = true;
+						servidor.setZonas( new ArrayList( Arrays.asList( Zona.Norte, Zona.Oriente, Zona.Sur, Zona.Occidente) ) ) ;
+					}
+				}else {
+					this.duplicado = new SimpleEntry<String, Integer>( host, puerto);
+				}
+			} catch (UnknownHostException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		
 		this.start();
 	}
 	
@@ -55,7 +98,9 @@ public class ServerThread extends Thread{
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("No se alcanzo el servidor auxiliar");
+			
 		}
 		
 		
@@ -106,21 +151,34 @@ public class ServerThread extends Thread{
 			//To do: COLOCAR CODIGO DE VERIFICAR QUE UNA NOTICIA LLEGO AL SISTEMA
 			Object[] tupla;
 			int i=-1;
+			
 			try {
+					System.out.println( "El sistema tiene " + servidor.getAgricultores().size() );
+					
 				do {
+					
 					i++;
 					if(i==servidor.getZonas().size())
-						i=0; 
+						i=0;
+					
 					tupla = servidor.getInfo().getp(new FormalField(Informacion.class), new ActualField(servidor.getZonas().get(i)));
+					//System.out.println( servidor.getInfo().size() );
+					
 				}while(tupla==null);
+				
+				System.out.println("Salio del while");
+				
 				ArrayList< Agricultor > destinatarios = new ArrayList< Agricultor >();
 				Informacion noticia = (Informacion)tupla[0];
 				synchronized( this ) {
-					for( Zona zone: zonas) {
+					System.out.println("El servidor tiene " + servidor.getAgricultores().size() );
+					for( Zona zone: servidor.getZonas() ) {
 						destinatarios.addAll( servidor.filtrar( noticia, zone ) ); 
 					}
 					for( Agricultor destinatario : destinatarios) {
 						SendUDPMessage( destinatario.getHost(), puerto , destinatario.getPuerto(), (Object)noticia );
+						gui.ActualizarLog("Envio", destinatario.getUsuario(), destinatario.getCultivo().getZona().toString() , noticia.getTitulo() );
+						
 					}
 				}
 			} catch (InterruptedException e) {
@@ -132,10 +190,13 @@ public class ServerThread extends Thread{
 	
 	
 public void escuchar() {
+		Socket s = null; 
+		ServerSocket ss = null;
+		
 		try 
 		{	
+			ss = new ServerSocket ( puerto );
 			Object dato;
-			ServerSocket ss = new ServerSocket ( puerto );
 			Set< Entry < String, Integer> > datosServidores;
 			
 			if( !esCentral ) {
@@ -145,7 +206,6 @@ public void escuchar() {
 			
 			while(true)
 			{		
-				Socket s;
 				s = ss.accept();
 				ObjectInputStream in = new ObjectInputStream( s.getInputStream() );
 				ObjectOutputStream out = new ObjectOutputStream( s.getOutputStream() );
@@ -159,6 +219,7 @@ public void escuchar() {
 					switch( servidor.ValidarUsuario(agricultor) ) {
 						
 						case INICIAR_SESION:
+							gui.ActualizarLog("Iniciar Sesion", agricultor.getUsuario(), agricultor.getCultivo().getZona().toString() , "");
 							synchronized ( this ) {
 								servidor.setPuerto( agricultor, s );
 							}
@@ -174,6 +235,7 @@ public void escuchar() {
 							break;
 							
 						case SUSCRIBIR: //Suscribir un usuario a todos los servidores activos
+								gui.ActualizarLog("Suscribir", agricultor.getUsuario(), agricultor.getCultivo().getZona().toString() , "");
 								synchronized( this ) {
 									servidor.RegistrarUsuario(agricultor);
 								}
@@ -186,6 +248,7 @@ public void escuchar() {
 							break;
 						
 						case ERROR: //Notificar que el usuario no se pudo Registrar
+							gui.ActualizarLog("ERROR", agricultor.getUsuario(), agricultor.getCultivo().getZona().toString() , "");
 							gui.EnviarMensajeError();
 							break;
 							
@@ -196,8 +259,9 @@ public void escuchar() {
 				}else if ( dato instanceof String) {
 					//Comunicacion Servidor -> Servidor
 					String mensaje = (String) dato;
-					if( mensaje.equals("ping"))
+					if( mensaje.equals("ping")) {
 						out.writeChars( "ACK" );
+					}
 					else if (mensaje.equals("ACK"))
 					{
 						synchronized ( estado )
@@ -206,22 +270,23 @@ public void escuchar() {
 						}
 					}
 					else if( mensaje.equals("solicitud")) {
-						int tam = zonas.size()/2;
-						while (tam > 0) {
-							Zona zone = zonas.remove( tam );
-							SendTCPMessage( duplicado.getKey() , duplicado.getValue() , zone );
-							tam--;
+						synchronized( this ) {							
+							int tam = servidor.getZonas().size()/2;
+							while (tam > 0) {
+								Zona zone = servidor.getZonas().remove( tam );
+								SendTCPMessage( duplicado.getKey() , duplicado.getValue() , zone );
+								tam--;
+							}
 						}
 					}
 					}else if ( dato instanceof Zona ) {
 					//Comunicacion Coordinador -> Servidor
 					synchronized ( this ) {						
-						zonas.add( (Zona) dato );
+						servidor.getZonas().add( (Zona) dato );
 					}
 				}
-				
-				s.close();
-				
+				if( s != null)
+					s.close();
 			}
 
 		} catch (ClassNotFoundException e) {
@@ -229,8 +294,19 @@ public void escuchar() {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
-		} 
+		}
+		finally {
+			try {
+				
+				if( ss != null)
+					ss.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	
@@ -246,7 +322,7 @@ public void escuchar() {
 				synchronized( estado ) {
 					esCentral = estado.equals("no_response");
 					if( esCentral ) {
-						zonas = new ArrayList( Arrays.asList( Zona.Norte, Zona.Oriente, Zona.Sur, Zona.Occidente) ) ;
+						servidor.setZonas( new ArrayList( Arrays.asList( Zona.Norte, Zona.Oriente, Zona.Sur, Zona.Occidente) ) ) ;
 					}
 				}
 				sleep( 2000 );
