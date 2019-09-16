@@ -18,12 +18,12 @@ public class Agricultor implements Serializable{
 	
 	private String nombre;
 	private String password;
-	private String port;
+	private int port;
 	private String host;
 	private String selfPort;
 	private Socket socket;
 	private List<Topico> topicos;
-	private List<Cultivo> cultivos;
+	private Cultivo cultivo;
 	/**
 	 * @param nombre
 	 * @param password
@@ -31,7 +31,7 @@ public class Agricultor implements Serializable{
 	 * @throws UnknownHostException 
 	 * @throws NumberFormatException 
 	 */
-	public Agricultor(String nombre, String password, String port, String host) throws NumberFormatException, UnknownHostException, IOException {
+	public Agricultor(String nombre, String password, int port, String host, Cultivo cult) throws NumberFormatException, UnknownHostException, IOException {
 		super();
 		this.nombre = nombre;
 		this.password = password;
@@ -39,7 +39,7 @@ public class Agricultor implements Serializable{
 		this.host = host;
 		this.selfPort = null;
 		topicos = new ArrayList<Topico>();
-		cultivos = new ArrayList<Cultivo>();
+		this.cultivo = cult;
 	}
 	/**
 	 * @return the nombre
@@ -68,13 +68,13 @@ public class Agricultor implements Serializable{
 	/**
 	 * @return the port
 	 */
-	public String getPort() {
+	public int getPort() {
 		return port;
 	}
 	/**
 	 * @param port the port to set
 	 */
-	public void setPort(String port) {
+	public void setPort(int port) {
 		this.port = port;
 	}
 	/**
@@ -116,14 +116,14 @@ public class Agricultor implements Serializable{
 	/**
 	 * @return the cultivos
 	 */
-	public List<Cultivo> getCultivos() {
-		return cultivos;
+	public Cultivo getCultivo() {
+		return cultivo;
 	}
 	/**
 	 * @param cultivos the cultivos to set
 	 */
-	public void setCultivos(List<Cultivo> cultivos) {
-		this.cultivos = cultivos;
+	public void setCultivos(Cultivo cultivo) {
+		this.cultivo = cultivo;
 	}
 	
 	/**
@@ -141,7 +141,7 @@ public class Agricultor implements Serializable{
 	
 	public void send_information() throws IOException {
 		try {
-			socket = new Socket(host, Integer.parseInt(port));
+			socket = new Socket(host, port );
 			System.out.println("Conexi�n establecida");
 			while (true) {
 				

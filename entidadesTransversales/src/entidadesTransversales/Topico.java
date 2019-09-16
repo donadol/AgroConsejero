@@ -1,8 +1,9 @@
 package entidadesTransversales;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Topico{
+public class Topico implements Serializable {
 	
 	private String nombre;
 	private List<String> subtopicos;
