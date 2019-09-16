@@ -12,7 +12,7 @@ import entidadesTransversales.*;
 
 
 public class FileUtils {
-	public static List<Informacion> leerInformacion(List<Topico>topicos){
+	public static List<Informacion> leerInformacion(){
 		List<Informacion> info = new ArrayList<Informacion>();
 		Informacion aux;
 		Topico topico;
@@ -37,8 +37,5 @@ public class FileUtils {
 			e.printStackTrace();
 		}
 		return info;
-	}
-	public static void main(String[] args) {
-		leerInformacion(null);
 	}
 }
