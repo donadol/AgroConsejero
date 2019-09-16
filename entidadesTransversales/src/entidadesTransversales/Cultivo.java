@@ -1,32 +1,60 @@
 package entidadesTransversales;
 
-public class Cultivo {
+import java.io.Serializable;
+
+public class Cultivo implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String tipo_producto;
+	private int tamanho;
 	private Zona zona;
-	private int tamano;
-	private String tipoProducto;
-	
-	public Cultivo(Zona zona, int tamano, String tipoProducto) {
+	/**
+	 * @param tipo_producto
+	 * @param tamanho
+	 * @param zona
+	 */
+	public Cultivo(String tipo_producto, int tamanho, Zona zona) {
 		super();
+		this.tipo_producto = tipo_producto;
+		this.tamanho = tamanho;
 		this.zona = zona;
-		this.tamano = tamano;
-		this.tipoProducto = tipoProducto;
 	}
+	/**
+	 * @return the tipo_producto
+	 */
+	public String getTipo_producto() {
+		return tipo_producto;
+	}
+	/**
+	 * @param tipo_producto the tipo_producto to set
+	 */
+	public void setTipo_producto(String tipo_producto) {
+		this.tipo_producto = tipo_producto;
+	}
+	/**
+	 * @return the tamanho
+	 */
+	public int getTamanho() {
+		return tamanho;
+	}
+	/**
+	 * @param tamanho the tamanho to set
+	 */
+	public void setTamanho(int tamanho) {
+		this.tamanho = tamanho;
+	}
+	/**
+	 * @return the zona
+	 */
 	public Zona getZona() {
 		return zona;
 	}
+	/**
+	 * @param zona the zona to set
+	 */
 	public void setZona(Zona zona) {
 		this.zona = zona;
-	}
-	public int getTamano() {
-		return tamano;
-	}
-	public void setTamano(int tamano) {
-		this.tamano = tamano;
-	}
-	public String getTipoProducto() {
-		return tipoProducto;
-	}
-	public void setTipoProducto(String tipoProducto) {
-		this.tipoProducto = tipoProducto;
 	}
 }

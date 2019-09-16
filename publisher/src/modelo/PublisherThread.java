@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.jspace.Space;
 
-import entidadesTransversales.*;
+import entidadesTransversales.Informacion;
 import utils.FileUtils;
 
 public class PublisherThread implements Runnable{
 	private Space info;
 	private List<Informacion> noticias;
-	public PublisherThread(Space info, List<Topico>topicos){
+	public PublisherThread(Space info){
 		this.info = info;
-		noticias = FileUtils.leerInformacion(topicos);
+		noticias = FileUtils.leerInformacion();
 	}
 	public void run() {
 		for(int i=0; i<noticias.size(); ++i) {

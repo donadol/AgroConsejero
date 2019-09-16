@@ -20,7 +20,7 @@ public class Main {
 			System.out.println("Opening repository gate at " + gateUri + "...");
 			repository.addGate(gateUri);
 			
-			Thread publisherThread = new Thread(new PublisherThread(info, null), "Publisher thread");//falta la lista de topicos
+			Thread publisherThread = new Thread(new PublisherThread(info), "Publisher thread");//falta la lista de topicos
 			publisherThread.start();
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
