@@ -15,7 +15,7 @@ public class Main {
 			Space info = new SequentialSpace();
 			repository.add("info", info);
 			
-			URI myUri = new URI("tcp://localhost:31415/?keep");
+			URI myUri = new URI("tcp://127.0.0.1:31415/?keep");
 			String gateUri = "tcp://" + myUri.getHost() + ":" + myUri.getPort() +  "?keep" ;
 			System.out.println("Opening repository gate at " + gateUri + "...");
 			repository.addGate(gateUri);

@@ -31,7 +31,7 @@ public class FileUtils {
 				}
 				topico = new Topico(jsonObj.getString("topico"), subtopicos);
 				aux = new Informacion(Zona.valueOf(jsonObj.getString("zona")), jsonObj.getString("titulo"), jsonObj.getString("descripcion"), Integer.parseInt(jsonObj.getString("tiempo")), topico);
-				System.out.println(aux);
+				info.add(aux);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

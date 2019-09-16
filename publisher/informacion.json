@@ -8,7 +8,7 @@
             "tags": [
                 "papa"
             ],
-            "tiempo": "0"
+            "tiempo": "10"
         },
         {
             "titulo": "Precio yuca",
@@ -18,7 +18,7 @@
             "tags": [
                 "yuca"
             ],
-            "tiempo": "10"
+            "tiempo": "20"
         },
         {
             "titulo": "Precio manzana",
@@ -28,7 +28,7 @@
             "tags": [
                 "manzana"
             ],
-            "tiempo": "5"
+            "tiempo": "15"
         },
         {
             "titulo": "Lluvia zona norte",
