@@ -1,3 +1,3 @@
-10.192.2.76*4900
-Mateus*pass1234*fruta-mango.50.Este,mora.100.Oeste/vegetal-tomate.20.Norte,pepino.30.Sur
-Julio*pass1234*tuberculo-papa.200.Norte,yuca.30.Oeste
+10.192.101.21*5469
+Mateus*pass1234*fruta-mango.50.Occidente
+Julio*pass1234*tuberculo-papa.200.Oriente

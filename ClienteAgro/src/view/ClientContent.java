@@ -96,6 +96,5 @@ public class ClientContent extends JFrame {
 		ClientThread hilo = new ClientThread(a);
 		Thread t = new Thread(hilo);
 		t.start();
-		
 	}
 }

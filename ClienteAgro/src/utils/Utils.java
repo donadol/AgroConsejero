@@ -98,18 +98,7 @@ public class Utils {
 										if (d == 1) {tipo = point_Token;}
 										if (d == 2) {tamanho = Integer.parseInt(point_Token);}
 										if (d == 3) {
-											if (point_Token.equals("Norte")) {
-												zona = Zona.Norte;
-											}
-											if (point_Token.equals("Sur")) {
-												zona = Zona.Sur;
-											}
-											if (point_Token.equals("Este")) {
-												zona = Zona.Oriente;
-											}
-											if (point_Token.equals("Oeste")) {
-												zona = Zona.Occidente;
-											}
+											zona = Zona.valueOf(point_Token);
 										}
 									}
 									d = 0;

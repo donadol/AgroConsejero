@@ -3,6 +3,7 @@
  */
 package controller;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -43,23 +44,25 @@ public class ClientThread implements Runnable{
 			System.out.println(agricultor.getCultivo().getZona().toString());
 			
 			out.writeObject(agricultor);
-			
-			socket.close();
-			/*ObjectInputStream in;
+			ObjectInputStream in;
 			in = new ObjectInputStream(socket.getInputStream());
 			
-			int new_port = (Integer) in.readObject();
+			int respuesta = (int) in.readObject();
 			
-			agricultor.setSelfPort(String.valueOf(new_port));
-			socket.close();*/
-			
-			DatagramSocket ds = new DatagramSocket(agricultor.getPort());
+			socket.close();
+			System.out.println( respuesta );
+			agricultor.setSelfPort(String.valueOf(respuesta));
+			DatagramSocket ds = new DatagramSocket(Integer.parseInt(agricultor.getSelfPort()));
 			while (true) {
+				
 				byte[] b = new byte[1024];
 				DatagramPacket dp = new DatagramPacket(b, 1024);
 				ds.receive(dp);
-				ByteArrayInputStream br = new ByteArrayInputStream();
-				//ObjectInputStream in = new ObjectInputStream(new );
+				ByteArrayInputStream br = new ByteArrayInputStream( b );
+				ObjectInputStream input = new ObjectInputStream(new BufferedInputStream( br ));
+				Informacion noticia = (Informacion) input.readObject();
+				
+				System.out.println(noticia);
 			} 
 		} catch(Exception e) {
 			e.printStackTrace();
