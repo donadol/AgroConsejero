@@ -3,6 +3,9 @@ package vista;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -62,7 +65,16 @@ public class ServerInterface extends JFrame implements Runnable{
 		table.addRow( new Object[]{ formato_fecha, Operacion, Cliente, Zona, Noticia} );
 	}
 	
-	public void EnviarMensajeExito() {
+	public void EnviarMensajeExito( Socket clientSocket ) {
+		
+		ObjectOutputStream out;
+		try {
+			out = new ObjectOutputStream( clientSocket.getOutputStream() );
+			out.write( Integer.valueOf( clientSocket.getPort() ) );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//TO DO
 	}
 	

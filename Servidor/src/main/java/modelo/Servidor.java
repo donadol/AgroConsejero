@@ -47,7 +47,7 @@ public class Servidor {
 	public EstadoUsuario ValidarUsuario( Agricultor agricultor ) {
 		
 		for( Agricultor usuario : agricultores ) {
-			if( usuario.getUsuario().equals( agricultor.getUsuario() ) ) {
+			if( usuario.getNombre().equals( agricultor.getNombre() ) ) {
 				
 				if( usuario.getPassword().equals( agricultor.getPassword() ) )
 					return EstadoUsuario.INICIAR_SESION;
@@ -69,8 +69,8 @@ public class Servidor {
 		
 		for( Agricultor usuario: agricultores) {
 			
-			if(  usuario.getUsuario().equals( agricultor.getUsuario()) ){
-				usuario.setPuerto( puerto.getPort() );
+			if(  usuario.getNombre().equals( agricultor.getNombre()) ){
+				usuario.setPort( puerto.getPort() );
 				usuario.setHost( puerto.getInetAddress().getHostAddress());
 				break;
 			}
@@ -86,10 +86,8 @@ public class Servidor {
 			if( agricultor.getCultivo().getZona() == zona) {
 				
 				for (Topico topi : agricultor.getTopicos()) {
-						if(noticia.getTopico().equals( topi )) {
 							destinatarios.add( agricultor );
 							break;
-						}
 				}
 			}
 		}

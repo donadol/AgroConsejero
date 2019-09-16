@@ -149,23 +149,25 @@ public class ServerThread extends Thread{
 		
 		while( true ) {			
 			//To do: COLOCAR CODIGO DE VERIFICAR QUE UNA NOTICIA LLEGO AL SISTEMA
-			Object[] tupla;
+			Object[] tupla = null;
 			int i=-1;
 			
 			try {
 					System.out.println( "El sistema tiene " + servidor.getAgricultores().size() );
-					
-				do {
-					
-					i++;
-					if(i==servidor.getZonas().size())
-						i=0;
-					
-					tupla = servidor.getInfo().getp(new FormalField(Informacion.class), new ActualField(servidor.getZonas().get(i)));
-					//System.out.println( servidor.getInfo().size() );
-					
-				}while(tupla==null);
-				
+										
+						do {
+							if( servidor.getInfo().size() > 0) {
+																
+								i++;
+								if(i==servidor.getZonas().size())
+									i=0;
+								
+								tupla = servidor.getInfo().getp(new FormalField(Informacion.class), new ActualField(servidor.getZonas().get(i)));
+								//System.out.println( servidor.getInfo().size() );
+								
+							}	
+						}while(tupla==null);
+
 				System.out.println("Salio del while");
 				
 				ArrayList< Agricultor > destinatarios = new ArrayList< Agricultor >();
@@ -176,8 +178,8 @@ public class ServerThread extends Thread{
 						destinatarios.addAll( servidor.filtrar( noticia, zone ) ); 
 					}
 					for( Agricultor destinatario : destinatarios) {
-						SendUDPMessage( destinatario.getHost(), puerto , destinatario.getPuerto(), (Object)noticia );
-						gui.ActualizarLog("Envio", destinatario.getUsuario(), destinatario.getCultivo().getZona().toString() , noticia.getTitulo() );
+						SendUDPMessage( destinatario.getHost(), puerto , destinatario.getPort(), (Object)noticia );
+						gui.ActualizarLog("Envio", destinatario.getNombre(), destinatario.getCultivo().getZona().toString() , noticia.getTitulo() );
 						
 					}
 				}
@@ -215,40 +217,50 @@ public void escuchar() {
 				if( dato instanceof Agricultor) {
 					//Comunicacion Cliente -> Servidor
 					Agricultor agricultor = (Agricultor) dato;
-					
+					System.out.println( "CULTIVO: " + agricultor.getCultivo() );
 					switch( servidor.ValidarUsuario(agricultor) ) {
 						
 						case INICIAR_SESION:
-							gui.ActualizarLog("Iniciar Sesion", agricultor.getUsuario(), agricultor.getCultivo().getZona().toString() , "");
+							gui.ActualizarLog("Iniciar Sesion", agricultor.getNombre(), agricultor.getCultivo().getZona().toString() , "");
 							synchronized ( this ) {
 								servidor.setPuerto( agricultor, s );
 							}
 							synchronized ( estado ) {								
 								if( esCentral ) {
 									agricultor.setHost( s.getInetAddress().getHostAddress() );
-									agricultor.setPuerto( s.getPort() );
+									agricultor.setPort( s.getPort() );
 									
 									SendTCPMessage( duplicado.getKey(), duplicado.getValue().intValue() ,(Object ) agricultor );
-									gui.EnviarMensajeExito();
+									//gui.EnviarMensajeExito();
 								}
 							}
 							break;
 							
 						case SUSCRIBIR: //Suscribir un usuario a todos los servidores activos
-								gui.ActualizarLog("Suscribir", agricultor.getUsuario(), agricultor.getCultivo().getZona().toString() , "");
+								System.out.println( "gui" +  gui );
+								//System.out.println( "cultivo" + agricultor.getCultivo() );
+								gui.ActualizarLog("Suscribir", agricultor.getNombre(), agricultor.getCultivo().getZona().toString() , "");
 								synchronized( this ) {
 									servidor.RegistrarUsuario(agricultor);
+									
 								}
 								synchronized (estado) {									
-									if( esCentral )
+									
+									if( esCentral ) {
+										agricultor.setHost( s.getInetAddress().getHostAddress() );
+										agricultor.setPort( s.getPort() );
+										
 										SendTCPMessage( duplicado.getKey(), duplicado.getValue().intValue() ,(Object ) agricultor );
+										
+									}
+									
 								}
-							
-							gui.EnviarMensajeExito();
+								
+								gui.EnviarMensajeExito( s );
 							break;
 						
 						case ERROR: //Notificar que el usuario no se pudo Registrar
-							gui.ActualizarLog("ERROR", agricultor.getUsuario(), agricultor.getCultivo().getZona().toString() , "");
+							gui.ActualizarLog("ERROR", agricultor.getNombre(), agricultor.getCultivo().getZona().toString() , "");
 							gui.EnviarMensajeError();
 							break;
 							
