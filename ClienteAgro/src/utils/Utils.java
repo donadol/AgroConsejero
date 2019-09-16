@@ -13,10 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import model.Agricultor;
-import model.Cultivo;
-import model.Topico;
-import model.Zona;
+import entidadesTransversales.*;
 
 /**
  * @author acer
@@ -44,22 +41,21 @@ public class Utils {
 	public static ArrayList<Agricultor> read_file (String File_Name) throws IOException {
 		ArrayList<Agricultor> agrs = new ArrayList<Agricultor>();
 		ArrayList<Topico> tops;
-		ArrayList<Cultivo> cults;
 		FileReader f = new FileReader(File_Name);
 		BufferedReader b = new BufferedReader(f);
-		String cadena, host = null, port = null;
+		String cadena, host = null;
+		int port = 0;
 		Agricultor agricultor;
 		Topico topico;
-		Cultivo cultivo;
+		Cultivo cultivo = null;
 		
 		StringTokenizer port_host = new StringTokenizer(b.readLine(), "*");
 		
 		host = port_host.nextToken();
-		port = port_host.nextToken();
+		port = Integer.parseInt(port_host.nextToken());
 		
 		while((cadena = b.readLine())!=null) {
 			tops = new ArrayList<Topico>();
-			cults = new ArrayList<Cultivo>();
 			StringTokenizer tokens = new StringTokenizer(cadena, "*");
 			int a = 0, c = 0, d = 0;
 			String token;
@@ -82,7 +78,7 @@ public class Utils {
 							c++;
 							token_guion = guion.nextToken();
 							if (c == 1) {
-								topico = new Topico(token_guion);
+								topico = new Topico(token_guion, null);
 								tops.add(topico);
 							}
 							if (c == 2) {
@@ -109,16 +105,15 @@ public class Utils {
 												zona = Zona.Sur;
 											}
 											if (point_Token.equals("Este")) {
-												zona = Zona.Este;
+												zona = Zona.Oriente;
 											}
 											if (point_Token.equals("Oeste")) {
-												zona = Zona.Oeste;
+												zona = Zona.Occidente;
 											}
 										}
 									}
 									d = 0;
 									cultivo = new Cultivo(tipo, tamanho, zona);
-									cults.add(cultivo);
 								}
 							}
 						}
@@ -127,42 +122,12 @@ public class Utils {
 				}
 			}
 			
-			agricultor = new Agricultor(nombre, password, port, host);
+			agricultor = new Agricultor(nombre, password, port, host, cultivo);
 			agricultor.setTopicos(tops);
-			agricultor.setCultivos(cults);
-			System.out.println("Topicos: ");
-			for (Topico t: agricultor.getTopicos()) {
-				System.out.println("\tTopico: " + t.getTema());
-			}
 			agrs.add(agricultor);
 		}
 		
 		b.close();
 		return agrs;
-	}
-	
-	public static void main(String[] args) throws IOException {
-		ArrayList<Agricultor> agrs = new ArrayList<Agricultor>();
-		
-		agrs = read_file("clientes.txt");
-		
-		for (Agricultor a: agrs) {
-			System.out.println("//----------------------------------------------------//");
-			System.out.println("Nombre: " + a.getNombre());
-			System.out.println("Password: " + a.getPassword());
-			System.out.println("Port: " + a.getPort());
-			System.out.println("Host: " + a.getHost());
-			System.out.println("Topicos: ");
-			for (Topico t: a.getTopicos()) {
-				System.out.println("\tTopico: " + t.getTema());
-			}
-			System.out.println("Cultivos: ");
-			for (Cultivo c: a.getCultivos()) {
-				System.out.println("(-------------------------------------------------------------");
-				System.out.println("\tCultivo: " + c.getTipo_producto());
-				System.out.println("\tTamaño: " + c.getTamanho());
-				System.out.println("\tZona: " + c.getZona());
-			}
-		}
 	}
 }

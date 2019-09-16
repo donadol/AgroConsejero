@@ -7,7 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import model.Agricultor;
+import controller.ClientThread;
+import entidadesTransversales.*;
 
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -46,20 +47,7 @@ public class ClientContent extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Agricultor a = null;
-					ClientContent frame = new ClientContent(a);
-					frame.setVisible(true);
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	
 
 	/**
 	 * Create the frame.
@@ -105,23 +93,9 @@ public class ClientContent extends JFrame {
 		);
 		contentPane.setLayout(gl_contentPane);
 		
-		System.out.println("Cliente: conectando al host: " + a.getHost() + ":" + a.getPort());
-		Socket socket = new Socket(a.getHost(), Integer.parseInt(a.getPort()));
-		System.out.println("Conexión establecida");
-		System.out.println("Host: " + a.getHost() + "Port: " + a.getPort());
-		/*out = new ObjectOutputStream(socket.getOutputStream()); 
-		outdata = new DataOutputStream(socket.getOutputStream());*/
-		in = new ObjectInputStream(socket.getInputStream());
+		ClientThread hilo = new ClientThread(a);
+		Thread t = new Thread(hilo);
+		t.start();
 		
-		int new_port = (Integer) in.readObject();
-		
-		a.setSelfPort(String.valueOf(new_port));
-		DatagramSocket ds = new DatagramSocket(Integer.parseInt(a.getSelfPort()));
-		byte[] b = new byte[1024];
-		DatagramPacket dp = new DatagramPacket(b, 1024);
-		ds.receive(dp); 
-		String str = new String(dp.getData(), 0, dp.getLength());
-		System.out.println(str);
-		ds.close();
 	}
 }

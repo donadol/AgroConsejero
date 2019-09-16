@@ -10,7 +10,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Agricultor;
+import entidadesTransversales.Agricultor;
 import utils.Utils;
 import view.ClientInterface;
 
@@ -31,7 +31,7 @@ public class Cliente {
 		
 		agrs = Utils.read_file("clientes.txt");
 		
-		Socket socket = new Socket("localhost", 4980); //ip de coordinador
+		/*Socket socket = new Socket("localhost", 4980); //ip de coordinador
 		
 		ObjectOutputStream out;
 		
@@ -42,7 +42,7 @@ public class Cliente {
 		System.out.println("Enviando agricultores...");
 		out.writeObject(agrs);
 		System.out.println("Agricultores enviados");
-		socket.close();
+		socket.close();*/
 		
 		for (Agricultor a: agrs) {
 			ClientInterface frame = new ClientInterface(a);

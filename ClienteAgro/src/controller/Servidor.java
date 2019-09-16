@@ -10,9 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 
-import model.Agricultor;
-import model.Cultivo;
-import model.Topico;
+import entidadesTransversales.*;
 
 public class Servidor {
 	public static void main (String args[]) throws IOException, ClassNotFoundException {
@@ -37,15 +35,13 @@ public class Servidor {
 				System.out.println("Host: " + a.getHost());
 				System.out.println("Topicos: ");
 				for (Topico t: a.getTopicos()) {
-					System.out.println("\tTopico: " + t.getTema());
+					System.out.println("\tTopico: " + t.getNombre());
 				}
 				System.out.println("Cultivos: ");
-				for (Cultivo c: a.getCultivos()) {
-					System.out.println("(-------------------------------------------------------------");
-					System.out.println("\tCultivo: " + c.getTipo_producto());
-					System.out.println("\tTamaño: " + c.getTamanho());
-					System.out.println("\tZona: " + c.getZona());
-				}
+				System.out.println("(-------------------------------------------------------------");
+				System.out.println("\tCultivo: " + a.getCultivo().getTipo_producto());
+				System.out.println("\tTamaño: " + a.getCultivo().getTamanho());
+				System.out.println("\tZona: " + a.getCultivo().getZona());
 			}
 			
 			socket.close();

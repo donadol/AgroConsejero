@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import model.Agricultor;
+import entidadesTransversales.*;
 import utils.Utils;
 
 import javax.swing.JLabel;
@@ -18,28 +18,12 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
+import javax.swing.JPasswordField;
 
 public class ClientInterface extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField txtPassword;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				Agricultor a = null;
-				try {
-					ClientInterface frame = new ClientInterface(a);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private final JPasswordField passwordField = new JPasswordField();
 
 	/**
 	 * Create the frame.
@@ -66,11 +50,6 @@ public class ClientInterface extends JFrame {
 		lblContrasea.setBounds(95, 113, 63, 14);
 		contentPane.add(lblContrasea);
 		
-		txtPassword = new JTextField();
-		txtPassword.setBounds(168, 110, 86, 20);
-		contentPane.add(txtPassword);
-		txtPassword.setColumns(10);
-		
 		JLabel lblName = new JLabel("New label");
 		lblName.setBounds(168, 78, 46, 14);
 		contentPane.add(lblName);
@@ -81,10 +60,13 @@ public class ClientInterface extends JFrame {
 		lblError.setBounds(10, 195, 414, 14);
 		contentPane.add(lblError);
 		
+		passwordField.setBounds(168, 109, 75, 23);
+		contentPane.add(passwordField);
+		
 		JButton btnIngresar = new JButton("Ingresar");
 		btnIngresar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if (Utils.getHash(txtPassword.getText(), "MD5").equals(agricultor.getPassword())) {
+				if (Utils.getHash( String.valueOf(passwordField.getPassword()), "MD5").equals(agricultor.getPassword())) {//mirar
 					ClientContent f = null;
 					try {
 						f = new ClientContent(agricultor);
@@ -96,8 +78,7 @@ public class ClientInterface extends JFrame {
 						e.printStackTrace();
 					}
 					f.setVisible(true);
-					ClientInterface fr = new ClientInterface(agricultor);
-					fr.setVisible(false);
+					setVisible(false);
 				} else {
 					lblError.setText("Contraseña Incorrecta");
 				}
@@ -105,5 +86,6 @@ public class ClientInterface extends JFrame {
 		});
 		btnIngresar.setBounds(168, 161, 89, 23);
 		contentPane.add(btnIngresar);
+		
 	}
 }
