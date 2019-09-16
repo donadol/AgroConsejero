@@ -3,6 +3,7 @@
  */
 package controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
@@ -50,15 +51,16 @@ public class ClientThread implements Runnable{
 			int new_port = (Integer) in.readObject();
 			
 			agricultor.setSelfPort(String.valueOf(new_port));
-			socket.close();
+			socket.close();*/
 			
-			DatagramSocket ds = new DatagramSocket(Integer.parseInt(agricultor.getSelfPort()));
-			byte[] b = new byte[1024];
-			DatagramPacket dp = new DatagramPacket(b, 1024);
-			ds.receive(dp); 
-			String str = new String(dp.getData(), 0, dp.getLength());
-			System.out.println(str);
-			ds.close();*/
+			DatagramSocket ds = new DatagramSocket(agricultor.getPort());
+			while (true) {
+				byte[] b = new byte[1024];
+				DatagramPacket dp = new DatagramPacket(b, 1024);
+				ds.receive(dp);
+				ByteArrayInputStream br = new ByteArrayInputStream();
+				//ObjectInputStream in = new ObjectInputStream(new );
+			} 
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
