@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 
 import org.jspace.RemoteSpace;
-import org.jspace.SequentialSpace;
-import org.jspace.Space;
 
 import controlador.ServerThread;
 import vista.ServerInterface;
