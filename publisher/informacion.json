@@ -4,7 +4,7 @@
             "titulo": "Precio papa",
             "descripcion": "Subio el precio de la papa sabanera en corabastos, $90.000 el bulto",
             "zona": "Occidente",
-            "topico": "fruta",
+            "topico": "tuberculo",
             "tags": [
                 "papa"
             ],
@@ -39,6 +39,26 @@
                 "lluvia"
             ],
             "tiempo": "5"
+        },
+        {
+            "titulo": "Buen clima zona sur",
+            "descripcion": "En la zona sur es un buen momento para la agricultura, debido al buen clima",
+            "zona": "Sur",
+            "topico": "clima",
+            "tags": [
+                "sol"
+            ],
+            "tiempo": "10"
+        },
+        {
+            "titulo": "Precio tomate",
+            "descripcion": "El precio de la tomate se mantuvo, $25.000 la canastilla",
+            "zona": "Sur",
+            "topico": "vegetal",
+            "tags": [
+                "tomate"
+            ],
+            "tiempo": "15"
         }
     ]
 }
