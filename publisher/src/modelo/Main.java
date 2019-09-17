@@ -7,6 +7,8 @@ import org.jspace.SequentialSpace;
 import org.jspace.Space;
 import org.jspace.SpaceRepository;
 
+import controlador.PublisherThread;
+
 public class Main {
 
 	public static void main(String[] args) {

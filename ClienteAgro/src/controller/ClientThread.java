@@ -53,6 +53,7 @@ public class ClientThread implements Runnable{
 			System.out.println(agricultor.getNombre());
 			System.out.println(agricultor.getCultivo().getTipo_producto());
 			System.out.println(agricultor.getCultivo().getTamanho());
+			System.out.println(agricultor.getTopicos().size());
 			System.out.println(agricultor.getCultivo().getZona().toString());
 			
 			out.writeObject(agricultor);
