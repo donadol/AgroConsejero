@@ -5,7 +5,9 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 import controller.ClientThread;
 import entidadesTransversales.*;
@@ -25,6 +27,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.SwingConstants;
 import javax.swing.JTable;
@@ -41,7 +45,6 @@ public class ClientContent extends JFrame {
 	static DataInputStream indata;
 	static DataOutputStream outdata;
 	private JPanel contentPane;
-	private JTable table;
 	private JTable table_1;
 
 	/**
@@ -57,44 +60,43 @@ public class ClientContent extends JFrame {
 	 */
 	public ClientContent(Agricultor a) throws UnknownHostException, IOException, ClassNotFoundException {
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 654, 370);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(28, 77, 578, 215);
+		contentPane.add(scrollPane);
 		
 		JLabel lblNewLabel = new JLabel("Bienvenido " + a.getNombre());
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setBounds(10, 22, 618, 37);
 		lblNewLabel.setFont(new Font("Microsoft Himalaya", Font.BOLD, 30));
-		
-		table = new JTable();
+		contentPane.add(lblNewLabel);
 		
 		table_1 = new JTable();
-		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(5)
-							.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 414, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(table_1, GroupLayout.PREFERRED_SIZE, 377, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap(5, Short.MAX_VALUE))
-		);
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGap(6)
-					.addComponent(lblNewLabel)
-					.addPreferredGap(ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-					.addComponent(table_1, GroupLayout.PREFERRED_SIZE, 162, GroupLayout.PREFERRED_SIZE)
-					.addGap(24))
-		);
-		contentPane.setLayout(gl_contentPane);
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		table_1.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"Tiempo", "Titulo", "Tópico", "Zona", "Descripción"
+			}
+		));
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		scrollPane.setViewportView(table_1);
 		
-		ClientThread hilo = new ClientThread(a);
+		ClientThread hilo = new ClientThread(a, this);
 		Thread t = new Thread(hilo);
 		t.start();
+	}
+	
+	public void actualizarLog (Informacion noticia) {
+		DefaultTableModel table = (DefaultTableModel) table_1.getModel();
+		Date fecha = new Date (System.currentTimeMillis());
+		String formato_fecha = new SimpleDateFormat("hh:mm:ss").format( fecha );
+		table.addRow( new Object[]{ formato_fecha, noticia.getTitulo(), noticia.getTopico().getNombre(), noticia.getZona().toString(), noticia.getDescripcion()} );
 	}
 }

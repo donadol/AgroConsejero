@@ -12,6 +12,7 @@ import java.net.DatagramSocket;
 import java.net.Socket;
 
 import entidadesTransversales.*;
+import view.ClientContent;
 
 /**
  * @author sistemas
@@ -20,10 +21,21 @@ import entidadesTransversales.*;
 public class ClientThread implements Runnable{
 
 	Agricultor agricultor;
+	public ClientContent gui;
+	public static int id = 0;
 	
-	public ClientThread(Agricultor a) {
+	public ClientContent getGui() {
+		return gui;
+	}
+
+	public void setGui(ClientContent gui) {
+		this.gui = gui;
+	}
+
+	public ClientThread(Agricultor a, ClientContent gui) {
 		super();
 		this.agricultor = a;
+		this.gui = gui;
 	}
 	
 	@Override
@@ -63,6 +75,8 @@ public class ClientThread implements Runnable{
 				Informacion noticia = (Informacion) input.readObject();
 				
 				System.out.println(noticia);
+				
+				gui.actualizarLog(noticia);
 			} 
 		} catch(Exception e) {
 			e.printStackTrace();
