@@ -37,6 +37,7 @@ public class ServerThread extends Thread{
 	private Servidor servidor;
 	private String operacion;
 	private boolean esCentral;
+	private List<Integer> puertos;
 	
 	//Servidor auxiliar
 	private Entry< String, Integer > duplicado;
@@ -60,7 +61,12 @@ public class ServerThread extends Thread{
 		this.operacion = operacion;
 		this.servidor = servidor;
 
-
+		this.puertos = new ArrayList<Integer>();
+		int aux_port=5000;
+		for (int i=0; i<20; i++) {
+			puertos.add(aux_port+i);
+		}
+		
 		String host;
 		int puerto, prioridad;
 		List< List< String > >datos = FileUtils.leerConfiguracionServidor();
@@ -154,8 +160,7 @@ public class ServerThread extends Thread{
 		while( true ) {			
 			//To do: COLOCAR CODIGO DE VERIFICAR QUE UNA NOTICIA LLEGO AL SISTEMA
 			Object[] tupla = null;
-			int i=-1;
-
+			int i = -1;
 			try {
 				System.out.println( "El sistema tiene " + servidor.getAgricultores().size() );
 
@@ -163,7 +168,7 @@ public class ServerThread extends Thread{
 					i++;
 					if(i==servidor.getZonas().size())
 						i=0;
-
+					
 					tupla = servidor.getInfo().getp(new FormalField(Informacion.class), new ActualField(servidor.getZonas().get(i)));
 
 				}while(tupla==null);
@@ -179,7 +184,7 @@ public class ServerThread extends Thread{
 						destinatarios.addAll( servidor.filtrar( noticia, zone ) ); 
 					}
 					for( Agricultor destinatario : destinatarios) {
-						SendUDPMessage( destinatario.getHost(), puerto , destinatario.getPort(), (Object)noticia );
+						SendUDPMessage( destinatario.getHost(), puerto , Integer.parseInt(destinatario.getSelfPort()), (Object)noticia );
 						gui.ActualizarLog("Envio", destinatario.getNombre(), destinatario.getCultivo().getZona().toString() , noticia.getTitulo() );
 
 					}
@@ -194,12 +199,12 @@ public class ServerThread extends Thread{
 
 	public void escuchar() {
 		Socket s = null; 
-		DatagramSocket ds = null;
+		//DatagramSocket ds = null;
 		ServerSocket ss = null;
 
 		try 
 		{	
-			ds = new DatagramSocket ( puerto );
+			//ds = new DatagramSocket ( puerto );
 			ss = new ServerSocket ( puerto );
 			Object dato;
 			Set< Entry < String, Integer> > datosServidores;
@@ -208,18 +213,22 @@ public class ServerThread extends Thread{
 				SendTCPMessage( duplicado.getKey(), duplicado.getValue(), "solicitud");
 				ServerThread s_ping = new ServerThread("ping", servidor);
 			}
+			
 
 			while(true){
-				byte[] b = new byte[1024];
+				/*byte[] b = new byte[1024];
 				DatagramPacket dp = new DatagramPacket(b, 1024);
 				ds.receive(dp);
 				
-				ByteArrayInputStream br = new ByteArrayInputStream(b);
-				ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(br));
-				ObjectOutputStream out = new ObjectOutputStream( s.getOutputStream() );
+				ByteArrayInputStream br = new ByteArrayInputStream(b);*/
+				
+				s = ss.accept();
+				
+				ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+				ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
 
 				dato = in.readObject();
-				System.out.println((Informacion)dato);
+				//System.out.println((Informacion)dato);
 
 				if( dato instanceof Agricultor) {
 					//Comunicacion Cliente -> Servidor
@@ -244,11 +253,11 @@ public class ServerThread extends Thread{
 
 					case SUSCRIBIR: //Suscribir un usuario a todos los servidores activos
 						System.out.println( "gui" +  gui );
-						//System.out.println( "cultivo" + agricultor.getCultivo() );
+						System.out.println( "cultivo" + agricultor.getCultivo() );
 						gui.ActualizarLog("Suscribir", agricultor.getNombre(), agricultor.getCultivo().getZona().toString() , "");
 						synchronized( this ) {
+							agricultor.setSelfPort(String.valueOf(this.puertos.get(servidor.getAgricultores().size())));
 							servidor.RegistrarUsuario(agricultor);
-
 						}
 						synchronized (estado) {									
 
@@ -261,9 +270,9 @@ public class ServerThread extends Thread{
 							}
 
 						}
-
-						//out.writeObject("RegistroExitoso");
-						SendUDPMessage(agricultor.getHost(), puerto, agricultor.getPort(), "RegistroExitoso");
+						
+						out.writeObject(this.puertos.get(servidor.getAgricultores().size()-1));
+						//SendUDPMessage(agricultor.getHost(), puerto, agricultor.getPort(), "RegistroExitoso");
 						break;
 
 					case ERROR: //Notificar que el usuario no se pudo Registrar
